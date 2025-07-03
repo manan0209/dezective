@@ -1,0 +1,324 @@
+{
+  "id": "level-5",
+  "title": "The Ultimate Investigation",
+  "difficulty": "Expert",
+  "description": "A sophisticated cybercriminal group has launched a coordinated attack. This is your final test - combine all your skills to uncover the complete operation.",
+  "scenario": {
+    "briefing": "Emergency Response: We're facing a coordinated cyberattack by an advanced persistent threat (APT) group. Multiple attack vectors have been deployed simultaneously: ransomware deployment, data theft, cryptocurrency theft, and supply chain compromise. This appears to be the work of the infamous 'Shadow Collective' group. You need to piece together the entire operation and identify their ultimate objective.",
+    "objective": "Uncover the complete attack campaign, identify all attack vectors, and determine the group's final target.",
+    "timeLimit": 4500,
+    "maxHints": 8
+  },
+  "environment": {
+    "serverName": "incident-response-server",
+    "osType": "Linux", 
+    "availableCommands": [
+      "ls", "cat", "grep", "find", "head", "tail", "less", "pwd", "cd", "history", "whoami", "ps", "netstat", "last", "awk", "sort", "uniq", "wc", "strings", "file", "xxd", "tcpdump", "wireshark", "volatility", "binwalk", "exiftool"
+    ],
+    "fileSystem": {
+      "/incident/timeline.txt": {
+        "type": "file",
+        "content": [
+          "INCIDENT TIMELINE - SHADOW COLLECTIVE ATTACK",
+          "============================================",
+          "Day 1 - 00:00: Spear phishing campaign begins",
+          "Day 1 - 06:30: First system compromise (CFO laptop)",
+          "Day 1 - 12:15: Lateral movement to finance network",
+          "Day 2 - 03:45: Ransomware deployment on backup servers",
+          "Day 2 - 08:20: Cryptocurrency wallet breach detected",
+          "Day 2 - 14:30: Supply chain infiltration discovered",
+          "Day 3 - 02:00: Data exfiltration in progress",
+          "Day 3 - 09:15: Nation-state indicators found",
+          "Day 3 - 15:45: **CLASSIFIED** - Target identified"
+        ]
+      },
+      "/incident/phishing/email_analysis.txt": {
+        "type": "file",
+        "content": [
+          "PHISHING EMAIL ANALYSIS",
+          "=======================",
+          "Subject: Invoice #INV-2024-001 - Payment Required",
+          "From: billing@legitmate-supplier.com",
+          "Attachment: invoice_2024_001.pdf.exe",
+          "",
+          "MALWARE ANALYSIS:",
+          "- File type: PE32 executable masquerading as PDF",
+          "- Packer: Custom obfuscation",
+          "- C2 Servers: shadow-command[.]net, backup-c2[.]org",
+          "- Capabilities: Keylogger, screen capture, crypto wallet stealer",
+          "",
+          "PAYLOAD DECODED:",
+          "Stage 1: PowerShell downloader",
+          "Stage 2: Memory-resident backdoor",
+          "Stage 3: Credential harvester",
+          "Stage 4: Lateral movement tools"
+        ]
+      },
+      "/incident/ransomware/shadow_note.txt": {
+        "type": "file",
+        "content": [
+          "=== SHADOW COLLECTIVE ===",
+          "",
+          "Your systems have been encrypted by Shadow Ransomware v3.7",
+          "",
+          "We have also exfiltrated your most sensitive data:",
+          "- Customer databases (2.3TB)",
+          "- Financial records (890GB)", 
+          "- Government contracts (classified)",
+          "- Executive communications",
+          "- Source code repositories",
+          "",
+          "Payment required: 500 Bitcoin (~$25,000,000)",
+          "Payment address: 1ShadowCollective3QrZ9KXeGdtdy7MUP5",
+          "",
+          "Contact: shadow.collective@protonmail.com",
+          "Tor site: http://shadowcollectivexyz.onion",
+          "",
+          "You have 72 hours before data is released publicly.",
+          "",
+          "DO NOT contact law enforcement or your data will be sold",
+          "to the highest bidder on dark web markets.",
+          "",
+          "=== The Shadow knows all ===",
+          "",
+          "P.S. Check your cryptocurrency wallets... 😈"
+        ]
+      },
+      "/incident/cryptocurrency/wallet_breach.log": {
+        "type": "file",
+        "content": [
+          "CRYPTOCURRENCY THEFT ANALYSIS",
+          "=============================",
+          "2024-01-25 08:20:33 [ALERT] Unauthorized wallet access detected",
+          "2024-01-25 08:20:45 [INFO] Wallet software: Electrum 4.1.5",
+          "2024-01-25 08:20:52 [CRIT] Private key extracted from memory dump",
+          "2024-01-25 08:21:15 [ALERT] Transaction initiated: 15.7 BTC transfer",
+          "2024-01-25 08:21:33 [INFO] Destination: 1ShadowCollective3QrZ9KXeGdtdy7MUP5",
+          "2024-01-25 08:21:45 [CRIT] Total stolen: $780,000 USD equivalent",
+          "",
+          "ATTACK VECTOR:",
+          "- Malware injected into Electrum process",
+          "- Memory scanning for private keys", 
+          "- Automated transaction to attacker wallet",
+          "- Transaction mixer used to launder funds"
+        ]
+      },
+      "/incident/supply_chain/vendor_compromise.txt": {
+        "type": "file",
+        "content": [
+          "SUPPLY CHAIN ATTACK ANALYSIS",
+          "============================",
+          "Compromised vendor: TechSupply Solutions Inc.",
+          "Product affected: Network monitoring software v2.4.1",
+          "",
+          "BACKDOOR DETAILS:",
+          "- Hidden in legitimate software update",
+          "- Activates 30 days after installation",
+          "- Provides full network access to attackers",
+          "- Deployed to 847 organizations worldwide",
+          "",
+          "IMPACT ASSESSMENT:",
+          "- Government agencies: 23 affected",
+          "- Critical infrastructure: 156 targets",
+          "- Fortune 500 companies: 89 compromised",
+          "- Total estimated impact: $2.4 billion",
+          "",
+          "ATTRIBUTION:",
+          "- Code signature: Lazarus Group patterns",
+          "- Infrastructure: Known APT28 servers",
+          "- TTPs match: Shadow Collective MO"
+        ]
+      },
+      "/incident/nation_state/classified_intel.txt": {
+        "type": "file",
+        "content": [
+          "CLASSIFIED - TOP SECRET",
+          "=======================",
+          "Operation: SHADOW MIRROR",
+          "Classification: TS/SCI",
+          "Clearance Required: Q-Level",
+          "",
+          "INTELLIGENCE SUMMARY:",
+          "Shadow Collective is a cover organization for state-sponsored actors.",
+          "Primary objective: Compromise critical infrastructure for future operations.",
+          "",
+          "REAL TARGET IDENTIFIED:",
+          "National Power Grid Control Systems",
+          "- Primary target: SCADA network infrastructure",
+          "- Secondary: Nuclear facility monitoring systems", 
+          "- Tertiary: Emergency response communications",
+          "",
+          "MOTIVATION:",
+          "Establish persistent access for potential wartime scenarios.",
+          "Current attacks are reconnaissance and positioning phase.",
+          "",
+          "RECOMMENDED ACTIONS:",
+          "1. Immediate isolation of critical infrastructure networks",
+          "2. Counter-intelligence operation deployment",
+          "3. International cooperation with allied nations",
+          "4. Prepare for escalated conflict scenarios",
+          "",
+          "=== END CLASSIFIED CONTENT ==="
+        ]
+      },
+      "/incident/forensics/memory_dump_analysis.txt": {
+        "type": "file",
+        "content": [
+          "MEMORY FORENSICS ANALYSIS",
+          "=========================",
+          "Volatility Framework Analysis Results",
+          "",
+          "SUSPICIOUS PROCESSES:",
+          "- svchost.exe (PID: 1337) - Malicious process injection",
+          "- explorer.exe (PID: 2024) - Hollowed legitimate process",
+          "- winlogon.exe (PID: 666) - Credential harvesting module",
+          "",
+          "NETWORK CONNECTIONS:",
+          "- 185.243.115.42:443 - Primary C2 server",
+          "- 203.0.113.15:8080 - Data exfiltration endpoint",
+          "- 192.168.1.100:445 - Internal lateral movement",
+          "",
+          "ENCRYPTED STRINGS FOUND:",
+          "- Base64: \"U2hhZG93Q29sbGVjdGl2ZUZpbmFsVGFyZ2V0\"",
+          "- XOR Key: 0x42",
+          "- Decrypted: \"Nuclear Facility Access Codes\"",
+          "",
+          "REGISTRY MODIFICATIONS:",
+          "- HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "- New entry: \"ShadowPersistence\" -> powershell.exe -enc [base64]"
+        ]
+      },
+      "/incident/final_analysis/master_plan.txt": {
+        "type": "file",
+        "content": [
+          "SHADOW COLLECTIVE - MASTER PLAN ANALYSIS",
+          "========================================",
+          "",
+          "OPERATION: DIGITAL DARKNESS",
+          "",
+          "PHASE 1: FINANCIAL DISRUPTION ✓",
+          "- Ransomware deployment across 500+ organizations",
+          "- Cryptocurrency theft ($780K stolen)",
+          "- Payment demands totaling $25M",
+          "",
+          "PHASE 2: SUPPLY CHAIN POISONING ✓", 
+          "- Compromise TechSupply Solutions",
+          "- Deploy backdoors to 847 organizations",
+          "- Establish persistent access to critical infrastructure",
+          "",
+          "PHASE 3: INTELLIGENCE GATHERING ✓",
+          "- Exfiltrate 2.3TB of sensitive data",
+          "- Target government agencies and contractors",
+          "- Map critical infrastructure dependencies",
+          "",
+          "PHASE 4: INFRASTRUCTURE COMPROMISE [IN PROGRESS]",
+          "- Target: National Power Grid SCADA systems",
+          "- Objective: Establish kill switches for cyber warfare",
+          "- Timeline: Complete within 30 days",
+          "",
+          "PHASE 5: ACTIVATION [STANDBY]",
+          "- Trigger: Geopolitical escalation event",
+          "- Effect: Coordinated infrastructure shutdown",
+          "- Impact: Economic collapse, national security crisis",
+          "",
+          "ATTRIBUTION OBFUSCATION:",
+          "- False flags pointing to multiple nation-states",
+          "- Use of common cybercriminal tools and methods",
+          "- Plausible deniability maintained",
+          "",
+          "ULTIMATE OBJECTIVE:",
+          "Position for next-generation cyber warfare capabilities.",
+          "Create chaos to mask true strategic objectives.",
+          "",
+          "=== OPERATION SHADOW MIRROR COMPLETE ==="
+        ]
+      }
+    }
+  },
+  "clues": [
+    {
+      "id": "clue-1",
+      "title": "Multi-Vector Attack Campaign",
+      "description": "This isn't a simple attack - it's a coordinated campaign with multiple simultaneous objectives.",
+      "hint": "Review the incident timeline to understand the scope of the operation",
+      "triggerCommands": ["cat /incident/timeline.txt"],
+      "revealed": false
+    },
+    {
+      "id": "clue-2", 
+      "title": "Sophisticated Phishing Operation",
+      "description": "The initial compromise used advanced malware with multiple stages of deployment.",
+      "hint": "Analyze the phishing email and malware to understand the attack vector",
+      "triggerCommands": ["cat /incident/phishing/email_analysis.txt"],
+      "revealed": false
+    },
+    {
+      "id": "clue-3",
+      "title": "Ransomware with a Twist",
+      "description": "The ransomware note reveals this group has bigger plans than just money.",
+      "hint": "Read the ransomware note carefully for hints about the attackers' true objectives",
+      "triggerCommands": ["cat /incident/ransomware/shadow_note.txt"],
+      "revealed": false
+    },
+    {
+      "id": "clue-4",
+      "title": "Cryptocurrency Theft Operation", 
+      "description": "The attackers deployed specialized malware to steal cryptocurrency wallets.",
+      "hint": "Examine the cryptocurrency breach logs to understand their techniques",
+      "triggerCommands": ["cat /incident/cryptocurrency/wallet_breach.log"],
+      "revealed": false
+    },
+    {
+      "id": "clue-5",
+      "title": "Supply Chain Infiltration",
+      "description": "A major software vendor was compromised to deploy backdoors globally.",
+      "hint": "Check the supply chain analysis to see the scope of vendor compromise",
+      "triggerCommands": ["cat /incident/supply_chain/vendor_compromise.txt"],
+      "revealed": false
+    },
+    {
+      "id": "clue-6",
+      "title": "Nation-State Indicators",
+      "description": "Intelligence suggests this is more than cybercrime - it's cyber warfare preparation.",
+      "hint": "Review the classified intelligence file for the true nature of the threat",
+      "triggerCommands": ["cat /incident/nation_state/classified_intel.txt"],
+      "revealed": false
+    },
+    {
+      "id": "clue-7",
+      "title": "Memory Forensics Evidence",
+      "description": "Memory analysis reveals hidden payloads and encrypted communications.",
+      "hint": "Examine the memory dump analysis for hidden indicators and encrypted data",
+      "triggerCommands": ["cat /incident/forensics/memory_dump_analysis.txt"],
+      "revealed": false
+    },
+    {
+      "id": "clue-8",
+      "title": "The Master Plan",
+      "description": "All the pieces come together to reveal a massive cyber warfare operation.",
+      "hint": "Find the complete analysis of the Shadow Collective's ultimate objectives",
+      "triggerCommands": ["cat /incident/final_analysis/master_plan.txt"],
+      "revealed": false
+    }
+  ],
+  "solution": {
+    "steps": [
+      "Understand this is a multi-phase coordinated attack campaign",
+      "Trace the initial compromise through sophisticated phishing", 
+      "Analyze the ransomware deployment and financial motivations",
+      "Investigate the cryptocurrency theft operations",
+      "Uncover the global supply chain compromise",
+      "Review classified intelligence about nation-state involvement",
+      "Examine memory forensics for hidden payloads",
+      "Piece together the complete master plan for cyber warfare preparation"
+    ],
+    "finalAnswer": "/incident/final_analysis/master_plan.txt",
+    "explanation": "Operation Digital Darkness: A sophisticated cyber warfare preparation campaign disguised as cybercrime. The Shadow Collective conducted ransomware attacks, cryptocurrency theft, and supply chain compromise as cover for infiltrating critical infrastructure. Their ultimate goal is establishing kill switches in national power grids and nuclear facilities for future cyber warfare scenarios. This represents next-generation APT tactics combining financial crime with strategic positioning for national security threats."
+  },
+  "scoring": {
+    "maxScore": 5000,
+    "timeBonus": 1000,
+    "hintPenalty": 300,
+    "wrongCommandPenalty": 200
+  }
+}

@@ -1,26 +1,253 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #00ff00;
+  
+  /* Terminal color scheme */
+  --terminal-bg: #0a0a0a;
+  --terminal-primary: #00ff00;
+  --terminal-secondary: #33ff33;
+  --terminal-accent: #ffff00;
+  --terminal-error: #ff0000;
+  --terminal-warning: #ff8800;
+  --terminal-info: #00ffff;
+  --terminal-muted: #888888;
+  --terminal-border: #333333;
 }
 
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-terminal-bg: var(--terminal-bg);
+  --color-terminal-primary: var(--terminal-primary);
+  --color-terminal-secondary: var(--terminal-secondary);
+  --color-terminal-accent: var(--terminal-accent);
+  --color-terminal-error: var(--terminal-error);
+  --color-terminal-warning: var(--terminal-warning);
+  --color-terminal-info: var(--terminal-info);
+  --color-terminal-muted: var(--terminal-muted);
+  --color-terminal-border: var(--terminal-border);
+  
+  --font-mono: 'Fira Code', 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+  --font-terminal: 'Courier New', 'Monaco', 'Consolas', monospace;
+  
+  --animate-terminal-blink: blink 1s infinite;
+  --animate-glitch: glitch 0.3s infinite;
+  --animate-matrix-rain: matrix-rain 20s linear infinite;
+  --animate-typewriter: typewriter 3s steps(40, end);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes matrix-rain {
+  0% { transform: translateY(-100vh); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-mono);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
+
+/* Terminal-specific utility classes */
+.terminal-container {
+  background: var(--terminal-bg);
+  color: var(--terminal-primary);
+  font-family: var(--font-mono);
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(0, 255, 0, 0.1) 0%, transparent 50%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 0, 0.03) 2px,
+      rgba(0, 255, 0, 0.03) 4px
+    );
+}
+
+.terminal-text {
+  color: var(--terminal-primary);
+  font-family: var(--font-mono);
+  text-shadow: 0 0 5px currentColor;
+}
+
+.terminal-cursor {
+  background: var(--terminal-primary);
+  animation: blink 1s infinite;
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+}
+
+.terminal-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--terminal-primary);
+  font-family: var(--font-mono);
+  caret-color: #00ff00;
+  width: 100%;
+}
+
+.terminal-output {
+  color: var(--terminal-secondary);
+}
+
+.terminal-error {
+  color: var(--terminal-error);
+}
+
+.terminal-warning {
+  color: var(--terminal-warning);
+}
+
+.terminal-info {
+  color: var(--terminal-info);
+}
+
+.glitch-effect {
+  position: relative;
+}
+
+.glitch-effect::before,
+.glitch-effect::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-effect::before {
+  color: #ff0000;
+  animation: glitch 0.3s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+}
+
+.glitch-effect::after {
+  color: #0000ff;
+  animation: glitch 0.3s infinite reverse;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+}
+
+/* Scrollbar styling for terminal */
+.terminal-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-track {
+  background: var(--terminal-bg);
+}
+
+.terminal-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--terminal-muted);
+  border-radius: 4px;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-primary);
+}
+
+/* Matrix rain effect */
+.matrix-rain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.2;
+  background: linear-gradient(transparent 70%, #00ff00);
+  animation: matrix-rain 20s linear infinite;
+}
+
+/* Panel styles */
+.game-panel {
+  background: var(--terminal-bg);
+  border: 1px solid var(--terminal-border);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 0, 0.1),
+    inset 0 0 20px rgba(0, 255, 0, 0.05);
+}
+
+.game-panel-header {
+  border-bottom: 1px solid var(--terminal-border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--terminal-accent);
+  font-family: var(--font-mono);
+  font-weight: bold;
+}
+
+/* Button styles */
+.terminal-button {
+  background: transparent;
+  border: 1px solid var(--terminal-primary);
+  color: var(--terminal-primary);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-mono);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.terminal-button:hover {
+  background: var(--terminal-primary);
+  color: var(--terminal-bg);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.terminal-button:active {
+  transform: scale(0.95);
+}
+
+/* Loading spinner */
+.terminal-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--terminal-muted);
+  border-top-color: var(--terminal-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Typewriter effect */
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--terminal-primary);
+  animation: typewriter 3s steps(40, end), blink 1s infinite 3s;
+}
+
+/* Syntax highlighting for commands */
+.syntax-command { color: var(--terminal-accent); }
+.syntax-option { color: var(--terminal-info); }
+.syntax-string { color: var(--terminal-warning); }
+.syntax-number { color: var(--terminal-secondary); }
+.syntax-comment { color: var(--terminal-muted); }

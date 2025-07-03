@@ -1,102 +1,312 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Terminal } from '@/components/game/Terminal';
+import { GameEngine } from '@/components/game/GameEngine';
+import { AuthPanel } from '@/components/game/AuthPanel';
+import { Leaderboard } from '@/components/game/Leaderboard';
+import { useGameStore } from '@/lib/game-store';
+import { levelManager } from '@/lib/level-manager';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { 
+    terminalLines, 
+    addTerminalLine, 
+    clearTerminal,
+    user, 
+    createUser,
+    loginUser,
+    loadProgress,
+    checkConnection,
+    currentLevelData,
+    isPlaying,
+    startLevel
+  } = useGameStore();
+  
+  const [isLoading, setIsLoading] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // Load saved progress and check connection on mount
+  useEffect(() => {
+    loadProgress();
+    checkConnection();
+  }, [loadProgress, checkConnection]);
+
+  const handleCommand = async (command: string) => {
+    // Add the input command to terminal
+    addTerminalLine({
+      type: 'input',
+      content: `$ ${command}`,
+    });
+
+    setIsLoading(true);
+
+    // Basic command handling for demo
+    await new Promise(resolve => setTimeout(resolve, 300)); // Simulate processing
+
+    const args = command.toLowerCase().split(' ');
+    const cmd = args[0];
+
+    switch (cmd) {
+      case 'help':
+        addTerminalLine({
+          type: 'output',
+          content: `DEZECTIVE v2.0 - Cybersecurity Investigation Terminal
+=====================================
+
+Authentication:
+  register <username>  - Create a new agent profile
+  login <username>     - Login with existing agent
+  whoami              - Display current user info
+
+Game Commands:
+  help                - Show this help message
+  clear               - Clear the terminal
+  levels              - List available investigations
+  start <level>       - Start a specific investigation
+  quit                - Exit current investigation
+
+Investigation commands (available during levels):
+  ls, cat, grep, find, head, tail, pwd, cd, history
+  
+Type 'levels' to see available investigations.
+Type 'register <username>' to create a new agent profile.`,
+        });
+        break;
+
+      case 'whoami':
+        if (user) {
+          addTerminalLine({
+            type: 'output',
+            content: `User Information:
+──────────────────
+Username: ${user.username}
+Total Score: ${user.totalScore}
+Levels Completed: ${user.levelsCompleted}
+Member Since: ${new Date(user.createdAt).toLocaleDateString()}`,
+          });
+        } else {
+          addTerminalLine({
+            type: 'warning',
+            content: 'No user logged in. Use "login [username]" to set your identity.',
+          });
+        }
+        break;
+
+      case 'login':
+        const username = args[1];
+        if (!username) {
+          addTerminalLine({
+            type: 'error',
+            content: 'Usage: login <username>\\nExample: login CyberAgent001',
+          });
+          break;
+        }
+
+        addTerminalLine({
+          type: 'info',
+          content: 'Authenticating with database...',
+        });
+
+        const loginSuccess = await loginUser(username);
+        if (!loginSuccess) {
+          addTerminalLine({
+            type: 'error',
+            content: `Agent "${username}" not found. Use "register <username>" to create a new agent.`,
+          });
+        }
+        break;
+
+      case 'register':
+        const newUsername = args[1];
+        if (!newUsername) {
+          addTerminalLine({
+            type: 'error',
+            content: 'Usage: register <username>\\nExample: register CyberAgent001',
+          });
+          break;
+        }
+
+        addTerminalLine({
+          type: 'info',
+          content: 'Creating new agent profile...',
+        });
+
+        const registerSuccess = await createUser(newUsername);
+        if (!registerSuccess) {
+          addTerminalLine({
+            type: 'error',
+            content: `Failed to create agent "${newUsername}". Username may already be taken.`,
+          });
+        }
+        break;
+
+      case 'clear':
+        clearTerminal();
+        break;
+
+      case 'levels':
+        const availableLevels = levelManager.getLevelList();
+        const levelList = availableLevels.map((level, index) => 
+          `  ${(index + 1).toString().padStart(2, '0')}. ${level.id.padEnd(15)} - ${level.title} [${level.difficulty}]`
+        ).join('\n');
+        
+        addTerminalLine({
+          type: 'output',
+          content: `Available Investigations:
+========================
+${levelList}
+
+Usage: start <level-id>
+Example: start level-1`,
+        });
+        break;
+
+      case 'start':
+        if (!args[1]) {
+          addTerminalLine({
+            type: 'error',
+            content: 'Usage: start <level-id>\\nUse "levels" to see available investigations.',
+          });
+          break;
+        }
+
+        const levelId = args[1];
+        const level = levelManager.getLevel(levelId);
+        
+        if (!level) {
+          addTerminalLine({
+            type: 'error',
+            content: `Level "${levelId}" not found. Use "levels" to see available investigations.`,
+          });
+          break;
+        }
+
+        if (!user) {
+          addTerminalLine({
+            type: 'warning',
+            content: 'Please login first using "login [username]" before starting an investigation.',
+          });
+          break;
+        }
+
+        // Initialize the level
+        if (levelManager.initializeLevel(levelId)) {
+          startLevel(level);
+          addTerminalLine({
+            type: 'info',
+            content: `Investigation Started: ${level.title}
+${level.scenario.briefing}
+
+Objective: ${level.scenario.objective}
+Time Limit: ${Math.floor(level.scenario.timeLimit / 60)} minutes
+Max Hints: ${level.scenario.maxHints}
+
+Type 'help' for available commands.`,
+          });
+        } else {
+          addTerminalLine({
+            type: 'error',
+            content: 'Failed to initialize investigation. Please try again.',
+          });
+        }
+        break;
+
+      case 'quit':
+        if (isPlaying) {
+          addTerminalLine({
+            type: 'warning',
+            content: 'Use "quit" within the investigation terminal to exit.',
+          });
+        } else {
+          addTerminalLine({
+            type: 'info',
+            content: 'No active investigation to quit.',
+          });
+        }
+        break;
+
+      default:
+        addTerminalLine({
+          type: 'error',
+          content: `Command not found: ${cmd}
+Type 'help' for available commands.`,
+        });
+        break;
+    }
+
+    setIsLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-terminal-bg">
+      {/* Header */}
+      <header className="border-b border-terminal-border p-4">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-2xl font-bold text-terminal-primary font-mono">
+            DEZECTIVE
+          </h1>
+          <p className="text-terminal-secondary text-sm mt-1">
+            Cybersecurity Investigation Platform
+          </p>
         </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto p-4">
+        {isPlaying && currentLevelData ? (
+          // Show game engine when level is active
+          <GameEngine className="h-full" />
+        ) : (
+          // Show main terminal interface
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Terminal */}
+            <div className="lg:col-span-2">
+              <Terminal
+                lines={terminalLines}
+                onCommand={handleCommand}
+                isLoading={isLoading}
+              />
+            </div>
+
+            {/* Side panels */}
+            <div className="space-y-6">
+              {/* Authentication Panel */}
+              <AuthPanel />
+
+              {/* Leaderboard */}
+              <Leaderboard />
+
+              {/* System Status */}
+              <div className="bg-terminal-bg border border-terminal-border rounded-lg p-4">
+                <h2 className="text-terminal-primary font-mono text-lg mb-3">System Status</h2>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-terminal-secondary">Status:</span>
+                    <span className="text-terminal-success">ONLINE</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-terminal-secondary">Levels:</span>
+                    <span className="text-terminal-accent">{levelManager.getAllLevels().length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-terminal-secondary">Mode:</span>
+                    <span className="text-terminal-accent">
+                      {isPlaying ? 'INVESTIGATION' : 'STANDBY'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Footer */}
+      <footer className="border-t border-terminal-border p-4 mt-8">
+        <div className="max-w-7xl mx-auto text-center text-terminal-muted text-sm">
+          <p>Dezective - A Hack Club Summer of Making Project</p>
+          <p className="mt-1">Built with Next.js, TypeScript, and TailwindCSS</p>
+        </div>
       </footer>
     </div>
   );
