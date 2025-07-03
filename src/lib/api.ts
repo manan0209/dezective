@@ -5,8 +5,17 @@ type DbScore = Database['public']['Tables']['scores']['Row'];
 type LeaderboardEntry = Database['public']['Views']['leaderboard']['Row'];
 
 export class SupabaseAPI {
+  private static isConfigured(): boolean {
+    return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  }
+
   // User Management
   static async createUser(username: string): Promise<User | null> {
+    if (!this.isConfigured()) {
+      console.warn('Supabase not configured, using local storage');
+      return null;
+    }
+
     try {
       const { data, error } = await supabase
         .from('users')
@@ -44,12 +53,22 @@ export class SupabaseAPI {
         return null;
       }
 
+      // Get user's rank
+      const { data: rankData, error: rankError } = await supabase
+        .from('users')
+        .select('id')
+        .gt('total_score', data.total_score)
+        .order('total_score', { ascending: false });
+
+      const rank = rankError ? undefined : (rankData?.length || 0) + 1;
+
       return {
         id: data.id,
         username: data.username,
         totalScore: data.total_score,
         levelsCompleted: data.levels_completed,
         createdAt: data.created_at,
+        rank,
       };
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -185,7 +204,7 @@ export class SupabaseAPI {
   // Utility functions
   static async isUsernameAvailable(username: string): Promise<boolean> {
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('users')
         .select('id')
         .eq('username', username)
@@ -193,7 +212,7 @@ export class SupabaseAPI {
 
       // If no error and no data, username is available
       return !data;
-    } catch (error) {
+    } catch {
       // If error is because no rows returned, username is available
       return true;
     }
@@ -207,8 +226,8 @@ export class SupabaseAPI {
         .limit(1);
 
       return !error;
-    } catch (error) {
-      console.error('Database connection failed:', error);
+    } catch {
+      console.error('Database connection failed');
       return false;
     }
   }

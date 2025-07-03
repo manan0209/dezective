@@ -241,13 +241,33 @@ Type 'help' for available commands.`,
     <div className="min-h-screen bg-terminal-bg">
       {/* Header */}
       <header className="border-b border-terminal-border p-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-terminal-primary font-mono">
-            DEZECTIVE
-          </h1>
-          <p className="text-terminal-secondary text-sm mt-1">
-            Cybersecurity Investigation Platform
-          </p>
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-terminal-primary font-mono">
+              DEZECTIVE
+            </h1>
+            <p className="text-terminal-secondary text-sm mt-1">
+              Cybersecurity Investigation Platform
+            </p>
+          </div>
+          
+          {/* System Status in Header */}
+          <div className="flex items-center gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-terminal-secondary">Status:</span>
+              <span className="text-terminal-success">ONLINE</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-terminal-secondary">Levels:</span>
+              <span className="text-terminal-accent">{levelManager.getAllLevels().length}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-terminal-secondary">Mode:</span>
+              <span className="text-terminal-accent">
+                {isPlaying ? 'INVESTIGATION' : 'STANDBY'}
+              </span>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -275,27 +295,6 @@ Type 'help' for available commands.`,
 
               {/* Leaderboard */}
               <Leaderboard />
-
-              {/* System Status */}
-              <div className="bg-terminal-bg border border-terminal-border rounded-lg p-4">
-                <h2 className="text-terminal-primary font-mono text-lg mb-3">System Status</h2>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-terminal-secondary">Status:</span>
-                    <span className="text-terminal-success">ONLINE</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-terminal-secondary">Levels:</span>
-                    <span className="text-terminal-accent">{levelManager.getAllLevels().length}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-terminal-secondary">Mode:</span>
-                    <span className="text-terminal-accent">
-                      {isPlaying ? 'INVESTIGATION' : 'STANDBY'}
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         )}

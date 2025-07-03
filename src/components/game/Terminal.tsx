@@ -32,6 +32,73 @@ export function Terminal({ lines, onCommand, isLoading = false, className }: Ter
     }
   }, []);
 
+  // Global keyboard event listener to auto-focus terminal input
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Don't interfere with form inputs, textareas, or content editable elements
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.contentEditable === 'true' ||
+        target.closest('input') ||
+        target.closest('textarea')
+      ) {
+        return;
+      }
+
+      // Don't interfere with special keys or key combinations
+      if (
+        e.ctrlKey ||
+        e.altKey ||
+        e.metaKey ||
+        e.key === 'Tab' ||
+        e.key === 'Escape' ||
+        e.key === 'F1' ||
+        e.key === 'F2' ||
+        e.key === 'F3' ||
+        e.key === 'F4' ||
+        e.key === 'F5' ||
+        e.key === 'F6' ||
+        e.key === 'F7' ||
+        e.key === 'F8' ||
+        e.key === 'F9' ||
+        e.key === 'F10' ||
+        e.key === 'F11' ||
+        e.key === 'F12'
+      ) {
+        return;
+      }
+
+      // Focus the terminal input if it's not already focused
+      if (inputRef.current && document.activeElement !== inputRef.current) {
+        inputRef.current.focus();
+        
+        // If it's a printable character, add it to the input
+        if (e.key.length === 1) {
+          const currentValue = inputRef.current.value;
+          setInput(currentValue + e.key);
+          e.preventDefault();
+        }
+      }
+    };
+
+    // Add global event listener
+    document.addEventListener('keydown', handleGlobalKeyDown);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, []);
+
+  // Also focus when the terminal container is clicked
+  const handleContainerClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -101,8 +168,8 @@ export function Terminal({ lines, onCommand, isLoading = false, className }: Ter
 
   return (
     <div 
-      className={cn('terminal-container w-full h-full flex flex-col', className)}
-      onClick={() => inputRef.current?.focus()}
+      className={cn('terminal-container w-full h-[600px] flex flex-col', className)}
+      onClick={handleContainerClick}
     >
       {/* Terminal Header */}
       <div className="flex items-center justify-between p-2 border-b border-terminal-border">

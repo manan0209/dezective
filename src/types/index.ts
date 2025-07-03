@@ -16,6 +16,7 @@ export interface User {
   totalScore: number;
   levelsCompleted: number;
   createdAt: string;
+  rank?: number;
 }
 
 export interface Score {

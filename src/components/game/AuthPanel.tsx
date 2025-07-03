@@ -74,38 +74,43 @@ export function AuthPanel({ className = '' }: AuthPanelProps) {
 
   if (user) {
     return (
-      <div className={`bg-black/50 border border-green-500/30 rounded-lg p-6 ${className}`}>
-        <div className="flex items-center gap-2 mb-4">
-          <User className="w-5 h-5 text-green-400" />
-          <h2 className="text-lg font-bold text-green-400">Agent Status</h2>
+      <div className={`bg-black/50 border border-green-500/30 rounded-lg p-4 ${className}`}>
+        <div className="flex items-center gap-2 mb-3">
+          <User className="w-4 h-4 text-green-400" />
+          <h2 className="text-base font-bold text-green-400">Agent Status</h2>
         </div>
         
-        <div className="space-y-3">
+        <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">Username:</span>
-            <span className="text-green-300 font-medium">{user.username}</span>
+            <span className="text-gray-400 text-sm">Username:</span>
+            <span className="text-green-300 font-medium text-sm">{user.username}</span>
           </div>
           
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">Total Score:</span>
-            <span className="text-green-400 font-bold">{user.totalScore.toLocaleString()}</span>
+            <span className="text-gray-400 text-sm">Rank:</span>
+            <span className="text-yellow-400 font-bold text-sm">#{user.rank || 'N/A'}</span>
           </div>
           
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">Levels Completed:</span>
-            <span className="text-green-400 font-bold">{user.levelsCompleted}/5</span>
+            <span className="text-gray-400 text-sm">Total Score:</span>
+            <span className="text-green-400 font-bold text-sm">{user.totalScore.toLocaleString()}</span>
           </div>
           
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">Database:</span>
-            <span className={`font-medium ${isConnected ? 'text-green-400' : 'text-red-400'}`}>
+            <span className="text-gray-400 text-sm">Levels Completed:</span>
+            <span className="text-green-400 font-bold text-sm">{user.levelsCompleted}/5</span>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <span className="text-gray-400 text-sm">Database:</span>
+            <span className={`font-medium text-sm ${isConnected ? 'text-green-400' : 'text-red-400'}`}>
               {isConnected ? 'Connected' : 'Offline'}
             </span>
           </div>
           
           <button
             onClick={handleLogout}
-            className="w-full mt-4 py-2 px-4 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors text-sm font-medium"
+            className="w-full mt-3 py-1.5 px-3 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors text-xs font-medium"
           >
             Logout
           </button>
@@ -115,48 +120,48 @@ export function AuthPanel({ className = '' }: AuthPanelProps) {
   }
 
   return (
-    <div className={`bg-black/50 border border-green-500/30 rounded-lg p-6 ${className}`}>
-      <div className="flex items-center gap-2 mb-4">
-        <UserPlus className="w-5 h-5 text-green-400" />
-        <h2 className="text-lg font-bold text-green-400">Agent Authentication</h2>
+    <div className={`bg-black/50 border border-green-500/30 rounded-lg p-4 ${className}`}>
+      <div className="flex items-center gap-2 mb-3">
+        <UserPlus className="w-4 h-4 text-green-400" />
+        <h2 className="text-base font-bold text-green-400">Agent Authentication</h2>
       </div>
 
       {!isConnected && (
-        <div className="mb-4 p-3 bg-orange-500/20 border border-orange-500/30 rounded-lg">
-          <div className="text-orange-400 text-sm">
+        <div className="mb-3 p-2 bg-orange-500/20 border border-orange-500/30 rounded-lg">
+          <div className="text-orange-400 text-xs">
             ⚠️ Database offline. Progress will be saved locally only.
           </div>
         </div>
       )}
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-1 mb-3">
         <button
           onClick={() => setMode('login')}
-          className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex-1 py-1.5 px-3 rounded text-xs font-medium transition-colors ${
             mode === 'login'
               ? 'bg-green-500/20 text-green-400 border border-green-500/30'
               : 'text-gray-400 hover:text-green-400 hover:bg-green-500/10'
           }`}
         >
-          <LogIn className="w-4 h-4 inline mr-2" />
+          <LogIn className="w-3 h-3 inline mr-1" />
           Login
         </button>
         <button
           onClick={() => setMode('register')}
-          className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex-1 py-1.5 px-3 rounded text-xs font-medium transition-colors ${
             mode === 'register'
               ? 'bg-green-500/20 text-green-400 border border-green-500/30'
               : 'text-gray-400 hover:text-green-400 hover:bg-green-500/10'
           }`}
         >
-          <UserPlus className="w-4 h-4 inline mr-2" />
+          <UserPlus className="w-3 h-3 inline mr-1" />
           Register
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label htmlFor="username" className="block text-sm font-medium text-gray-400 mb-2">
+          <label htmlFor="username" className="block text-xs font-medium text-gray-400 mb-1">
             Agent Codename
           </label>
           <div className="relative">
@@ -166,25 +171,25 @@ export function AuthPanel({ className = '' }: AuthPanelProps) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your codename..."
-              className="w-full px-4 py-2 bg-black/50 border border-green-500/30 rounded-lg text-green-300 placeholder-gray-500 focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-400"
+              className="w-full px-3 py-1.5 bg-black/50 border border-green-500/30 rounded text-green-300 placeholder-gray-500 focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-400 text-sm"
               disabled={loading}
               maxLength={20}
             />
             {mode === 'register' && username.length >= 3 && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+              <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
                 {checkingUsername ? (
-                  <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
+                  <Loader2 className="w-3 h-3 text-gray-400 animate-spin" />
                 ) : usernameAvailable === true ? (
-                  <Check className="w-4 h-4 text-green-400" />
+                  <Check className="w-3 h-3 text-green-400" />
                 ) : usernameAvailable === false ? (
-                  <X className="w-4 h-4 text-red-400" />
+                  <X className="w-3 h-3 text-red-400" />
                 ) : null}
               </div>
             )}
           </div>
           
           {mode === 'register' && username && (
-            <div className="mt-2 text-xs">
+            <div className="mt-1 text-xs">
               {!isValidUsername(username) ? (
                 <span className="text-red-400">
                   Username must be 3-20 characters, letters, numbers, _ and - only
@@ -202,7 +207,7 @@ export function AuthPanel({ className = '' }: AuthPanelProps) {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm"
+            className="p-2 bg-red-500/20 border border-red-500/30 rounded text-red-400 text-xs"
           >
             {error}
           </motion.div>
@@ -216,11 +221,11 @@ export function AuthPanel({ className = '' }: AuthPanelProps) {
             !isValidUsername(username) ||
             (mode === 'register' && usernameAvailable !== true)
           }
-          className="w-full py-2 px-4 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full py-1.5 px-3 bg-green-500/20 text-green-400 border border-green-500/30 rounded hover:bg-green-500/30 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
         >
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-3 h-3 animate-spin" />
               {mode === 'register' ? 'Creating Agent...' : 'Logging In...'}
             </>
           ) : (
@@ -231,11 +236,11 @@ export function AuthPanel({ className = '' }: AuthPanelProps) {
         </button>
       </form>
 
-      <div className="mt-4 pt-4 border-t border-green-500/20">
-        <div className="text-xs text-gray-500 text-center">
+      <div className="mt-3 pt-2 border-t border-green-500/20">
+        <div className="text-xs text-gray-500 text-center leading-tight">
           {mode === 'register' 
-            ? 'Create a unique agent codename to track your progress and compete on leaderboards.' 
-            : 'Login with your existing agent codename to continue your investigation.'
+            ? 'Login with your existing agent codename to continue your investigation.'
+            : 'Create a unique agent codename to track your progress and compete on leaderboards.' 
           }
         </div>
       </div>
