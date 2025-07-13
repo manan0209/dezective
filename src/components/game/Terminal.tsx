@@ -1,22 +1,29 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { TerminalLine } from '@/types';
 import { cn } from '@/lib/utils';
+import { TerminalLine } from '@/types';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface TerminalProps {
   lines: TerminalLine[];
   onCommand: (command: string) => void;
   isLoading?: boolean;
   className?: string;
+  levelManager?: any; // We'll pass this from GameEngine
 }
 
-export function Terminal({ lines, onCommand, isLoading = false, className }: TerminalProps) {
+export function Terminal({ lines, onCommand, isLoading = false, className, levelManager }: TerminalProps) {
   const [input, setInput] = useState('');
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [isClient, setIsClient] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Set client flag after hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Auto-scroll to bottom when new lines are added
   useEffect(() => {
@@ -140,7 +147,61 @@ export function Terminal({ lines, onCommand, isLoading = false, className }: Ter
       }
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      // TODO: Implement command auto-completion
+      // Tab autocomplete: commands and files/dirs in current working directory
+      const commands = levelManager 
+        ? levelManager.getAvailableCommands().concat(['help', 'clear', 'quit'])
+        : ['help', 'clear', 'register', 'login', 'whoami', 'start'];
+      
+      const inputParts = input.trim().split(/\s+/);
+      
+      if (inputParts.length === 1) {
+        // Autocomplete command
+        const matches = commands.filter((cmd: string) => cmd.startsWith(inputParts[0]));
+        if (matches.length === 1) {
+          setInput(matches[0] + ' ');
+        } else if (matches.length > 1) {
+          // Show possible completions in terminal
+          console.log('Multiple matches:', matches);
+        }
+      } else if (inputParts.length > 1 && levelManager) {
+        // Autocomplete file/directory paths
+        const lastArg = inputParts[inputParts.length - 1];
+        const currentDir = levelManager.getCurrentWorkingDirectory();
+        
+        // Determine target directory for completion
+        let targetDir = currentDir;
+        if (lastArg.includes('/')) {
+          if (lastArg.startsWith('/')) {
+            // Absolute path
+            const pathParts = lastArg.split('/');
+            pathParts.pop(); // Remove the incomplete filename
+            targetDir = pathParts.join('/') || '/';
+          } else {
+            // Relative path
+            const pathParts = lastArg.split('/');
+            pathParts.pop(); // Remove the incomplete filename
+            if (pathParts.length > 0) {
+              targetDir = currentDir === '/' ? `/${pathParts.join('/')}` : `${currentDir}/${pathParts.join('/')}`;
+            }
+          }
+        }
+        
+        // Get available files in target directory
+        const availableFiles = levelManager.getAvailableFiles(targetDir);
+        const prefix = lastArg.includes('/') ? lastArg.substring(0, lastArg.lastIndexOf('/') + 1) : '';
+        const searchTerm = lastArg.includes('/') ? lastArg.substring(lastArg.lastIndexOf('/') + 1) : lastArg;
+        
+        const matches = availableFiles.filter((file: string) => file.startsWith(searchTerm));
+        
+        if (matches.length === 1) {
+          // Complete the path
+          const newInput = inputParts.slice(0, -1).join(' ') + ' ' + prefix + matches[0];
+          setInput(newInput);
+        } else if (matches.length > 1) {
+          // Show possible completions
+          console.log('Multiple file matches:', matches);
+        }
+      }
     }
   };
 
@@ -193,7 +254,7 @@ export function Terminal({ lines, onCommand, isLoading = false, className }: Ter
             className={cn('mb-1', getLineClass(line.type))}
           >
             <span className="text-terminal-muted text-xs mr-2">
-              {new Date(line.timestamp).toLocaleTimeString()}
+              {isClient ? new Date(line.timestamp).toLocaleTimeString() : '--:--:--'}
             </span>
             <span className="whitespace-pre-wrap">
               {formatLineContent(line)}

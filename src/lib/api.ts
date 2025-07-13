@@ -1,5 +1,5 @@
-import { supabase, Database } from './supabase';
 import { User } from '../types';
+import { Database, supabase } from './supabase';
 
 type DbScore = Database['public']['Tables']['scores']['Row'];
 type LeaderboardEntry = Database['public']['Views']['leaderboard']['Row'];

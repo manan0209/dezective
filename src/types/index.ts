@@ -79,8 +79,11 @@ export interface Level {
     osType: string;
     availableCommands: string[];
     fileSystem: Record<string, unknown>;
+    specialCommands?: Record<string, {
+      output: string | string[];
+      action?: string;
+    }>;
   };
-  clues: Clue[];
   solution: {
     steps: string[];
     finalAnswer: string;

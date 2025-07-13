@@ -1,9 +1,13 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Trophy, Medal, Award, Clock, Target, RefreshCw } from 'lucide-react';
 import { SupabaseAPI } from '@/lib/api';
+import { motion } from 'framer-motion';
+import { Award, Medal, RefreshCw, Trophy } from 'lucide-react';
+import React, { useCallback } from 'react';
+
+const LEVELS = [
+  { id: 'level-1', name: 'GTA VI Investigation' },
+];
 
 interface LeaderboardEntry {
   username: string;
@@ -36,15 +40,7 @@ export function Leaderboard({ className = '' }: LeaderboardProps) {
   const [loading, setLoading] = React.useState(true);
   const [showFullLeaderboard, setShowFullLeaderboard] = React.useState(false);
 
-  const levels = [
-    { id: 'level-1', name: 'L1' },
-    { id: 'level-2', name: 'L2' },
-    { id: 'level-3', name: 'L3' },
-    { id: 'level-4', name: 'L4' },
-    { id: 'level-5', name: 'L5' },
-  ];
-
-  const loadLeaderboards = async () => {
+  const loadLeaderboards = useCallback(async () => {
     setLoading(true);
     try {
       // Load global leaderboard - get all entries
@@ -53,7 +49,7 @@ export function Leaderboard({ className = '' }: LeaderboardProps) {
 
       // Load level-specific leaderboards - get all entries  
       const levelBoards: Record<string, Score[]> = {};
-      for (const level of levels) {
+      for (const level of LEVELS) {
         const scores = await SupabaseAPI.getLevelLeaderboard(level.id, 1000);
         levelBoards[level.id] = scores;
       }
@@ -63,11 +59,11 @@ export function Leaderboard({ className = '' }: LeaderboardProps) {
     } finally {
       setLoading(false);
     }
-  };
-
-  React.useEffect(() => {
-    loadLeaderboards();
   }, []);
+
+  React.  useEffect(() => {
+    loadLeaderboards();
+  }, [loadLeaderboards]);
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -82,11 +78,6 @@ export function Leaderboard({ className = '' }: LeaderboardProps) {
     }
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
 
   if (loading) {
     return (
@@ -127,7 +118,7 @@ export function Leaderboard({ className = '' }: LeaderboardProps) {
         >
           Global
         </button>
-        {levels.map((level) => (
+        {LEVELS.map((level) => (
           <button
             key={level.id}
             onClick={() => setActiveTab(level.id)}

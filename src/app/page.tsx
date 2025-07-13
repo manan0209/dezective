@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Terminal } from '@/components/game/Terminal';
-import { GameEngine } from '@/components/game/GameEngine';
 import { AuthPanel } from '@/components/game/AuthPanel';
+import { GameEngine } from '@/components/game/GameEngine';
 import { Leaderboard } from '@/components/game/Leaderboard';
+import { Terminal } from '@/components/game/Terminal';
 import { useGameStore } from '@/lib/game-store';
 import { levelManager } from '@/lib/level-manager';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const { 
@@ -50,26 +50,37 @@ export default function Home() {
       case 'help':
         addTerminalLine({
           type: 'output',
-          content: `DEZECTIVE v2.0 - Cybersecurity Investigation Terminal
+          content: `DEZECTIVE - A HACKER CLUB 
 =====================================
 
 Authentication:
-  register <username>  - Create a new agent profile
-  login <username>     - Login with existing agent
+  register <username>  - Create a new hacker profile
+  login <username>     - Login with existing profile
   whoami              - Display current user info
 
-Game Commands:
+Commands:
   help                - Show this help message
   clear               - Clear the terminal
-  levels              - List available investigations
-  start <level>       - Start a specific investigation
+  start               - Start the investigation
   quit                - Exit current investigation
 
-Investigation commands (available during levels):
-  ls, cat, grep, find, head, tail, pwd, cd, history
+Investigation Commands (available during investigation):
+  ls [directory]      - List files and directories (explore the system)
+  cat <file>          - Read file contents (examine evidence)
+  cd <directory>      - Change directory (navigate the file system)
+  pwd                 - Show current directory path
+  whoami             - Display current user identity
+  netstat            - Show network connections (find open ports)
+  iptables -L        - Display firewall rules (security analysis)
+
+Pro Tips:
+- Start by exploring your home directory with 'ls'
+- Read the mission briefing with 'cat mission.txt'
+- Check network activity to find security vulnerabilities
+- Use firewall commands to secure compromised ports
   
-Type 'levels' to see available investigations.
-Type 'register <username>' to create a new agent profile.`,
+Type 'register <username>' to create a new hacker profile.
+Type 'start' to begin the GTA VI leak investigation.`,
         });
         break;
 
@@ -144,64 +155,28 @@ Member Since: ${new Date(user.createdAt).toLocaleDateString()}`,
         clearTerminal();
         break;
 
-      case 'levels':
-        const availableLevels = levelManager.getLevelList();
-        const levelList = availableLevels.map((level, index) => 
-          `  ${(index + 1).toString().padStart(2, '0')}. ${level.id.padEnd(15)} - ${level.title} [${level.difficulty}]`
-        ).join('\n');
-        
-        addTerminalLine({
-          type: 'output',
-          content: `Available Investigations:
-========================
-${levelList}
-
-Usage: start <level-id>
-Example: start level-1`,
-        });
-        break;
-
       case 'start':
-        if (!args[1]) {
-          addTerminalLine({
-            type: 'error',
-            content: 'Usage: start <level-id>\\nUse "levels" to see available investigations.',
-          });
-          break;
-        }
-
-        const levelId = args[1];
-        const level = levelManager.getLevel(levelId);
-        
-        if (!level) {
-          addTerminalLine({
-            type: 'error',
-            content: `Level "${levelId}" not found. Use "levels" to see available investigations.`,
-          });
-          break;
-        }
-
         if (!user) {
           addTerminalLine({
             type: 'warning',
-            content: 'Please login first using "login [username]" before starting an investigation.',
+            content: 'Please login first using "login [username]" before starting the investigation.',
           });
           break;
         }
 
+        // Get the single level
+        const level = levelManager.getLevel();
+        
         // Initialize the level
-        if (levelManager.initializeLevel(levelId)) {
+        if (levelManager.initializeLevel()) {
           startLevel(level);
           addTerminalLine({
             type: 'info',
-            content: `Investigation Started: ${level.title}
-${level.scenario.briefing}
-
-Objective: ${level.scenario.objective}
-Time Limit: ${Math.floor(level.scenario.timeLimit / 60)} minutes
-Max Hints: ${level.scenario.maxHints}
-
-Type 'help' for available commands.`,
+            content: `Investigation Started: ${level.title}`,
+          });
+          addTerminalLine({
+            type: 'output',
+            content: level.scenario.briefing,
           });
         } else {
           addTerminalLine({
@@ -258,8 +233,12 @@ Type 'help' for available commands.`,
               <span className="text-terminal-success">ONLINE</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-terminal-secondary">Levels:</span>
-              <span className="text-terminal-accent">{levelManager.getAllLevels().length}</span>
+              <span className="text-terminal-secondary">Level:</span>
+              <span className="text-terminal-accent">
+                {isPlaying && currentLevelData
+                  ? `${currentLevelData.id.replace('level-', 'Level ')}: ${currentLevelData.title}`
+                  : `—`}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-terminal-secondary">Mode:</span>
@@ -285,6 +264,7 @@ Type 'help' for available commands.`,
                 lines={terminalLines}
                 onCommand={handleCommand}
                 isLoading={isLoading}
+                levelManager={null}
               />
             </div>
 
@@ -304,8 +284,7 @@ Type 'help' for available commands.`,
       <footer className="border-t border-terminal-border p-4 mt-8">
         <div className="max-w-7xl mx-auto text-center text-terminal-muted text-sm">
           <p>Dezective - A Hack Club Summer of Making Project</p>
-          <p className="mt-1">Built with Next.js, TypeScript, and TailwindCSS</p>
-        </div>
+          </div>
       </footer>
     </div>
   );

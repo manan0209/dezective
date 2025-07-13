@@ -1,0 +1,137 @@
+{
+  "id": "gta-vi-leak",
+  "title": "GTA VI Leak Investigation",
+  "difficulty": "Beginner",
+  "description": "Someone leaked GTA VI gameplay footage. Find the security vulnerability and stop the breach.",
+  "scenario": {
+    "briefing": "SECURITY BREACH DETECTED\n\nSomeone just leaked 90 minutes of GTA VI gameplay footage online.\nYour mission: Find the network vulnerability and close it.\n\nStart with: ls",
+    "objective": "Find and close the vulnerable network port",
+    "timeLimit": 900,
+    "maxHints": 2
+  },
+  "environment": {
+    "serverName": "rockstar-server",
+    "osType": "Linux",
+    "availableCommands": ["ls", "cat", "cd", "netstat", "iptables"],
+    "specialCommands": {
+      "netstat -tuln": {
+        "output": [
+          "Active Internet connections (only servers)",
+          "Proto Recv-Q Send-Q Local Address           Foreign Address         State",
+          "tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN",
+          "tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN",
+          "tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN",
+          "tcp        0      0 0.0.0.0:6789            0.0.0.0:*               LISTEN      [VULNERABLE]",
+          "tcp        0      0 0.0.0.0:7777            0.0.0.0:*               LISTEN",
+          "",
+          "WARNING: Port 6789 is open without firewall protection!",
+          "This is how the hacker accessed GTA VI files.",
+          "",
+          "Use: iptables -A INPUT -p tcp --dport 6789 -j DROP"
+        ],
+        "action": "reveal_vulnerability"
+      },
+      "iptables -A INPUT -p tcp --dport 6789 -j DROP": {
+        "output": [
+          "Firewall rule added successfully.",
+          "",
+          "Port 6789 has been blocked from external access.",
+          "GTA VI vulnerability is now patched.",
+          "",
+          "MISSION COMPLETE",
+          "You successfully secured the GTA VI development server.",
+          "Time to complete your investigation will be recorded."
+        ],
+        "action": "complete_mission"
+      }
+    },
+    "fileSystem": {
+      "/": { "type": "directory" },
+      "/home": { "type": "directory" },
+      "/home/hacker": { 
+        "type": "directory",
+        "description": "Your workspace"
+      },
+      "/home/hacker/mission.txt": {
+        "type": "file",
+        "content": [
+          "GTA VI LEAK INVESTIGATION",
+          "========================",
+          "",
+          "WHAT HAPPENED:",
+          "- 90 minutes of GTA VI gameplay leaked online",
+          "- Hacker gained access through open network port",
+          "- Need to find and close the vulnerability",
+          "",
+          "YOUR TASK:",
+          "1. Check incident report: cat /logs/incident.txt",
+          "2. Scan network ports: netstat -tuln", 
+          "3. Close vulnerable port: iptables command",
+          "",
+          "TIME IS CRITICAL - Every second counts for the leaderboard!"
+        ]
+      },
+      "/logs": {
+        "type": "directory",
+        "description": "System logs and evidence"
+      },
+      "/logs/incident.txt": {
+        "type": "file",
+        "content": [
+          "ROCKSTAR GAMES SECURITY INCIDENT",
+          "================================",
+          "",
+          "Timeline:",
+          "10:30 AM - Game testing server activated",
+          "10:32 AM - Network port opened for testing",
+          "11:45 AM - External connection detected",
+          "12:15 PM - GTA VI footage appears online",
+          "",
+          "Analysis:",
+          "- No employee accounts compromised",
+          "- Access through unsecured network port",
+          "- Hacker used automated scanning tools",
+          "- Downloaded game development files",
+          "",
+          "Next step: Scan current network ports to find vulnerability"
+        ]
+      },
+      "/logs/network.txt": {
+        "type": "file",
+        "content": [
+          "NETWORK CONNECTION LOG",
+          "======================",
+          "",
+          "Normal connections:",
+          "10:30 - 192.168.1.5 -> Port 7777 (Dev team)",
+          "10:31 - 192.168.1.12 -> Port 8080 (QA team)", 
+          "",
+          "Suspicious activity:",
+          "11:45 - 203.0.113.25 -> Port 6789 (EXTERNAL IP)",
+          "11:46 - Large data transfer detected",
+          "11:52 - 156.2MB downloaded (GTA VI files)",
+          "12:05 - Connection terminated",
+          "",
+          "Port 6789 was left open without firewall protection.",
+          "Use netstat to see current port status."
+        ]
+      }
+    }
+  },
+  "solution": {
+    "steps": [
+      "Read mission briefing",
+      "Check incident report",
+      "Scan network ports with netstat",
+      "Close port 6789 with iptables"
+    ],
+    "finalAnswer": "iptables -A INPUT -p tcp --dport 6789 -j DROP",
+    "explanation": "The GTA VI leak happened because port 6789 was open without firewall protection. The hacker found this port and downloaded game files. Closing it with iptables prevents future attacks."
+  },
+  "scoring": {
+    "maxScore": 1000,
+    "timeBonus": 500,
+    "hintPenalty": 200,
+    "wrongCommandPenalty": 50
+  }
+}

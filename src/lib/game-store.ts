@@ -1,8 +1,8 @@
+import { SupabaseAPI } from '@/lib/api';
+import { generateId, loadFromLocalStorage, saveToLocalStorage } from '@/lib/utils';
+import { GameState, Level, LevelState, TerminalLine, User } from '@/types';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { GameState, Level, LevelState, User, TerminalLine } from '@/types';
-import { generateId, saveToLocalStorage, loadFromLocalStorage } from '@/lib/utils';
-import { SupabaseAPI } from '@/lib/api';
 
 interface GameStore extends GameState {
   user: User | null;
@@ -60,14 +60,20 @@ export const useGameStore = create<GameStore>()(
         {
           id: generateId(),
           type: 'output',
-          content: 'Welcome to DEZECTIVE - Digital Crime Scene Investigation',
+          content: '🕵️ Welcome to DEZECTIVE - Digital Crime Scene Investigation',
           timestamp: Date.now(),
         },
         {
           id: generateId(),
-          type: 'output',
-          content: 'Type "help" to see available commands',
+          type: 'info',
+          content: '💡 New Agent? Type "help" for commands | Ready to investigate? Type "levels" to see cases',
           timestamp: Date.now() + 1,
+        },
+        {
+          id: generateId(),
+          type: 'warning',
+          content: '⚠️  First time? Create your agent profile: register YourAgentName',
+          timestamp: Date.now() + 2,
         },
       ],
       isConnected: false,
@@ -133,15 +139,20 @@ export const useGameStore = create<GameStore>()(
           },
         });
 
-        // Add level start message to terminal
+        // Add minimal level start message
         get().addTerminalLine({
-          type: 'info',
-          content: `Starting level: ${level.title}`,
+          type: 'output',
+          content: `${level.scenario.briefing}`,
         });
 
         get().addTerminalLine({
-          type: 'output',
-          content: level.description,
+          type: 'info',
+          content: `🎯 Objective: ${level.scenario.objective}`,
+        });
+
+        get().addTerminalLine({
+          type: 'info',
+          content: `⏱️  Time Limit: ${Math.floor(level.scenario.timeLimit / 60)} minutes | 💡 Hints Available: ${level.scenario.maxHints}`,
         });
 
         get().saveProgress();

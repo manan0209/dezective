@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { User, UserPlus, LogIn, Check, X, Loader2 } from 'lucide-react';
-import { useGameStore } from '@/lib/game-store';
 import { SupabaseAPI } from '@/lib/api';
+import { useGameStore } from '@/lib/game-store';
+import { motion } from 'framer-motion';
+import { Check, Loader2, LogIn, User, UserPlus, X } from 'lucide-react';
+import React from 'react';
 
 interface AuthPanelProps {
   className?: string;
