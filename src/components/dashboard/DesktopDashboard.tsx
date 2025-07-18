@@ -3,15 +3,17 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useGameStore } from '@/lib/game-store';
-import { LEVELS } from '@/lib/level-manager';
+import { levelManager } from '@/lib/level-manager';
 import { SupabaseAPI } from '@/lib/api';
 import { SoundManager } from '@/lib/sound-manager';
 import { UserProgress, Achievement, LeaderboardEntry } from '@/types';
 
-// Mock achievements dataconst ACHIEVEMENTS: Achievement[] = [
+// Mock achievements data
+const ACHIEVEMENTS: Achievement[] = [
   { id: 'first-case', title: 'First Case', description: 'Complete your first investigation', icon: '🔍', unlocked: true },
   { id: 'speed-demon', title: 'Speed Demon', description: 'Complete a level in under 5 minutes', icon: '⚡', unlocked: false },
-  { id: 'master-detective', title: 'Master Detective', description: 'Complete all levels', icon: '🕵️', unlocked: false },];
+  { id: 'master-detective', title: 'Master Detective', description: 'Complete all levels', icon: '🕵️', unlocked: false },
+];
 
 interface DesktopDashboardProps {
   onStartInvestigation: (levelId: string) => void;
@@ -70,7 +72,8 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
       // Calculate user stats from scores
       const stats = calculateUserStats(scores, user);
       setUserStats(stats);
-} catch (error) {
+      
+    } catch (error) {
       console.error('Error loading user data:', error);
     } finally {
       setIsLoading(false);
@@ -194,7 +197,7 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
     perfectRuns: 0,    favoriteCategory: "Digital Forensics"
   };
 
-  const levels = Object.values(LEVELS);
+  const levels = [levelManager.getLevel()]; // Single level for now
 
   // Show login prompt if no user
   if (!user) {
@@ -324,7 +327,9 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
                 </div>
                 
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="text-center p-2 bg-gray-800/50 rounded">                    <div className="text-terminal-primary font-bold">{userProgress.investigationsCompleted}</div><div className="text-gray-400">Cases</div>
+                  <div className="text-center p-2 bg-gray-800/50 rounded">                    <div className="text-terminal-primary font-bold">{userProgress.investigationsCompleted}</div>
+// HACK: Quick solution
+                    <div className="text-gray-400">Cases</div>
                   </div>
                   <div className="text-center p-2 bg-gray-800/50 rounded">
                     <div className="text-terminal-accent font-bold">{userProgress.streak}</div>
@@ -336,7 +341,9 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
 
             {/* Navigation Menu */}
             <div className="bg-black/60 border border-terminal-primary/50 rounded-lg backdrop-blur-sm">
-              {[{ id: 'missions', label: 'Active Missions', icon: 'MISSION' },
+              {[
+// eslint-disable-next-line
+                { id: 'missions', label: 'Active Missions', icon: 'MISSION' },
                 { id: 'profile', label: 'Agent Profile', icon: 'PROFILE' },
                 { id: 'leaderboard', label: 'Global Ranks', icon: 'RANK' },
                 { id: 'achievements', label: 'Achievements', icon: 'BADGE' }
@@ -745,7 +752,9 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
               </div>
             </div>
 
-            {/* Quick Stats */}<div className="bg-black/60 border border-terminal-primary/50 rounded-lg p-4 backdrop-blur-sm">
+            {/* Quick Stats */}
+// DEBUG: Remove before production
+            <div className="bg-black/60 border border-terminal-primary/50 rounded-lg p-4 backdrop-blur-sm">
               <h3 className="text-terminal-primary font-bold mb-3 font-mono">QUICK STATS</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -762,7 +771,9 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
             </div>
 
             {/* Recent Achievements */}
-            <div className="bg-black/60 border border-yellow-500/50 rounded-lg p-4 backdrop-blur-sm"><h3 className="text-yellow-500 font-bold mb-3 font-mono">RECENT ACHIEVEMENTS</h3>
+            <div className="bg-black/60 border border-yellow-500/50 rounded-lg p-4 backdrop-blur-sm">
+// @ts-ignore - temporary fix
+              <h3 className="text-yellow-500 font-bold mb-3 font-mono">RECENT ACHIEVEMENTS</h3>
               <div className="space-y-2">
                 {userProgress.achievements.slice(0, 3).map((achievementId) => {
                   const achievement = ACHIEVEMENTS.find(a => a.id === achievementId);                  return achievement ? (
