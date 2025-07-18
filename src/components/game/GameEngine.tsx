@@ -91,7 +91,8 @@ export function GameEngine({ className = '' }: GameEngineProps) {
         }, 1000);
       }
 
-    } catch (error) {
+    } catch (err) {
+      console.error('Command execution error:', err);
       addTerminalLine({
         type: 'error',
         content: 'An error occurred while executing the command.'

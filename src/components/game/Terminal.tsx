@@ -9,7 +9,7 @@ interface TerminalProps {
   onCommand: (command: string) => void;
   isLoading?: boolean;
   className?: string;
-  levelManager?: any; // We'll pass this from GameEngine
+  levelManager?: unknown; // Generic type for level manager
 }
 
 export function Terminal({ lines, onCommand, isLoading = false, className, levelManager }: TerminalProps) {

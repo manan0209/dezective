@@ -160,7 +160,7 @@ class LevelManager {
     return '';
   }
 
-  private handleNetstat(args: string[]): string {
+  private handleNetstat(_args: string[]): string {
     return `Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State      
 tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     
