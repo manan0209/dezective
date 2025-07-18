@@ -9,11 +9,13 @@ DEZECTIVE is an educational terminal-based game that teaches cybersecurity inves
 ## Features
 
 - **Terminal Interface**: Authentic command-line experience with Linux commands
+- **Immersive Audio**: Typing sounds, clicks, beeps, and musical feedback
 - **Investigation Scenarios**: Real-world cybersecurity cases to solve
 - **Evidence Collection**: Progressive clue system that reveals as players investigate
 - **Scoring System**: Points based on efficiency, accuracy, and completion time
 - **Multiple Difficulty Levels**: From beginner to advanced investigations
 - **User Progress Tracking**: Save progress and track achievements
+- **Sound Controls**: Toggle audio on/off with smart volume balancing
 
 ## Tech Stack
 

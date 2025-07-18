@@ -1,0 +1,19 @@
+{
+  "id": "level-2",
+  "title": "Taylor Swift Ticket Bot Crisis",
+  "difficulty": "Intermediate",
+  "category": "Bot Detection",
+  "description": "Swifties are crying! Ticket bots are hoarding Taylor Swift concert tickets. Stop the bots and save the Eras Tour!",
+  "scenario": {
+    "briefing": "SWIFTIE EMERGENCY: Taylor Swift Eras Tour tickets just went on sale, but bots are buying them all! Real fans cant get tickets. The ticketing system is under siege. You need to identify and block the malicious bots before they ruin the concert for millions of fans.",
+    "objective": "Identify the bot traffic patterns and implement blocking rules",
+    "timeLimit": 1200,
+    "maxHints": 4
+  },
+  "scoring": {
+    "maxScore": 1500,
+    "timeBonus": 300,
+    "hintPenalty": 75,
+    "wrongCommandPenalty": 15
+  }
+}

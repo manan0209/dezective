@@ -20,18 +20,18 @@ export interface Achievement {
 export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'speed-demon',
-    title: '⚡ Speed Demon',
+    title: 'Speed Demon',
     description: 'Complete any investigation in under 3 minutes',
-    icon: '⚡',
+    icon: 'SPEED',
     rarity: 'epic',
     requirements: { type: 'time', value: 180 },
     rewards: { xp: 1000, title: 'Lightning Hacker' }
   },
   {
     id: 'perfect-run',
-    title: '🎯 Flawless',
+    title: 'Flawless',
     description: 'Complete an investigation without any wrong commands',
-    icon: '🎯',
+    icon: 'PERFECT',
     rarity: 'rare',
     requirements: { type: 'commands', value: 0 },
     rewards: { xp: 500, unlocks: ['precision-mode'] }
@@ -65,9 +65,9 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'streak-master',
-    title: '🔥 On Fire',
+    title: 'On Fire',
     description: 'Complete 7 investigations in 7 days',
-    icon: '🔥',
+    icon: 'FIRE',
     rarity: 'epic',
     requirements: { type: 'streak', value: 7 },
     rewards: { xp: 1500, title: 'Streak Master', unlocks: ['fire-mode'] }

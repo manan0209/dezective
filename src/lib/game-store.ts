@@ -2,17 +2,14 @@ import { SupabaseAPI } from '@/lib/api';
 import { generateId, loadFromLocalStorage, saveToLocalStorage } from '@/lib/utils';
 import { GameState, Level, LevelState, TerminalLine, User } from '@/types';
 import { create } from 'zustand';
-import { subscribeWithSelector } from 'zustand/middleware';
-
-interface GameStore extends GameState {
+import { subscribeWithSelector } from 'zustand/middleware';interface GameStore extends GameState {
   user: User | null;
   currentLevelData: Level | null;
   levelState: LevelState;
   terminalLines: TerminalLine[];
   isConnected: boolean;
   
-  // Actions
-  setUser: (user: User | null) => void;
+  // ActionssetUser: (user: User | null) => void;
   createUser: (username: string) => Promise<boolean>;
   loginUser: (username: string) => Promise<boolean>;
   startLevel: (level: Level) => void;

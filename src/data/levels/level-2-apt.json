@@ -1,0 +1,110 @@
+{
+  "id": "level-2-apt",
+  "title": "Russian APT Cyberattack",
+  "difficulty": "Intermediate",
+  "category": "Malware Analysis",
+  "description": "A Russian Advanced Persistent Threat group has infiltrated government systems. Analyze their attack vectors and track their digital footprints.",
+  "scenario": {
+    "briefing": "CLASSIFIED: A Russian state-sponsored hacking group (APT28) has breached government networks. The attack used sophisticated malware and social engineering. Your job is to reverse-engineer their attack chain and identify their persistence mechanisms.",
+    "objective": "Analyze the malware samples, identify attack vectors, and trace the command & control infrastructure",
+    "timeLimit": 1200,
+    "maxHints": 4
+  },
+  "scoring": {
+    "maxScore": 1500,
+    "timeBonus": 300,
+    "hintPenalty": 75,
+    "wrongCommandPenalty": 15
+  },
+  "investigation": {
+    "steps": [
+      {
+        "id": "step-1",
+        "description": "Read the intelligence briefing about the APT attack",
+        "commands": ["cat intelligence_brief.txt"],
+        "clues": ["apt-background"]
+      },
+      {
+        "id": "step-2",
+        "description": "Examine the malware samples in the analysis directory",
+        "commands": ["ls /analysis", "cat /analysis/malware_report.txt"],
+        "clues": ["malware-analysis", "attack-vector"]
+      },
+      {
+        "id": "step-3",
+        "description": "Analyze network traffic for C2 communications",
+        "commands": ["cat /logs/network_traffic.pcap.txt", "grep -i 'outbound' /logs/network_traffic.pcap.txt"],
+        "clues": ["c2-traffic", "persistence-mechanism"]
+      },
+      {
+        "id": "step-4",
+        "description": "Investigate persistence mechanisms and backdoors",
+        "commands": ["cat /evidence/persistence_analysis.txt", "find /analysis -name '*backdoor*'"],
+        "clues": ["backdoor-detected", "registry-persistence"]
+      },
+      {
+        "id": "step-5",
+        "description": "Connect the evidence and identify the threat actor",
+        "commands": ["cat /evidence/threat_attribution.txt"],
+        "clues": ["apt28-confirmed"]
+      }
+    ]
+  },
+  "fileSystem": {
+    "structure": {
+      "/home/detective": {
+        "type": "directory",
+        "children": {
+          "intelligence_brief.txt": {
+            "type": "file",
+            "content": "CLASSIFIED INTELLIGENCE BRIEFING\n=================================\n\nTHREAT ACTOR: APT28 (Fancy Bear)\nOPERATION: STEALTH EAGLE\nTARGET: Government Infrastructure\nDATE: 2024-12-10\n\nSITUATION OVERVIEW:\nA sophisticated cyber attack has been detected against government networks. Initial indicators suggest Russian state-sponsored activity consistent with APT28 tactics, techniques, and procedures (TTPs).\n\nATTACK TIMELINE:\n- Day 1: Spear-phishing emails sent to government employees\n- Day 2: Initial malware deployment through Office macros\n- Day 3: Lateral movement and privilege escalation\n- Day 4: Data exfiltration to external C2 servers\n- Day 5: Detection and incident response initiated\n\nYOUR MISSION:\n1. Analyze malware samples to understand attack vectors\n2. Examine network traffic for C2 communications\n3. Identify persistence mechanisms used by the attackers\n4. Attribute the attack to specific threat actor (APT28)\n5. Document IOCs for threat hunting\n\nCLASSIFICATION: TOP SECRET//SI//NOFORN",
+            "clues": ["apt-background"]
+          }
+        }
+      },
+      "/analysis": {
+        "type": "directory",
+        "children": {
+          "malware_report.txt": {
+            "type": "file",
+            "content": "MALWARE ANALYSIS REPORT\n======================\n\nSAMPLE: stealth_document.docm\nMD5: 7d8f2b4a9c1e3f5g7h9i0j2k4l6m8n0p\nSHA256: 3c5d7e9f1a2b4c6d8e0f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b2c4d6e8\n\nEXECUTION FLOW:\n1. Victim opens malicious Word document\n2. VBA macro executes PowerShell payload\n3. PowerShell downloads second-stage from: hxxp://update-server[.]com/secure/update.ps1\n4. Beacon establishes C2 communication to: 185.159.158[.]240\n5. Privilege escalation using CVE-2021-34527 (PrintNightmare)\n\nPERSISTENCE MECHANISMS:\n- Registry key: HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\SecurityUpdate\n- Scheduled task: Microsoft\\Windows\\SystemRestore\\SRCheck\n- Service: Windows Security Update Service (WSecUpdate)\n\nCAPABILITIES OBSERVED:\n✓ Keylogging\n✓ Screenshot capture\n✓ File exfiltration\n✓ Command execution\n✓ Network reconnaissance\n\nATTRIBUTION INDICATORS:\n- Code similarities to previous APT28 campaigns\n- Infrastructure overlaps with known Russian operations\n- TTP alignment with Fancy Bear playbook",
+            "clues": ["malware-analysis", "attack-vector"]
+          },
+          "backdoor_analysis.txt": {
+            "type": "file",
+            "content": "BACKDOOR ANALYSIS\n================\n\nFILE: wsecupdate.exe\nLOCATION: C:\\Windows\\System32\\wsecupdate.exe\nSIZE: 287,744 bytes\nCOMPILED: 2024-12-08 14:32:15 UTC\n\nFUNCTIONALITY:\n- Multi-stage RAT (Remote Access Trojan)\n- Encrypted C2 communications using AES-256\n- Self-deletion capability on detection\n- Process hollowing for stealth execution\n\nCOMMAND & CONTROL:\nPrimary C2: 185.159.158.240:8443\nBackup C2: update-server[.]com:443\nBackup C2: secure-cdn[.]net:80\n\nENCRYPTION KEY (extracted): \n41E94B4F2A5C8D7E9F1A3B5C7D9E0F2A4B6C8D0E2F4A6B8C0D2E4F6A8B0C2D4E\n\nPERSISTENCE METHODS:\n1. Service installation as 'Windows Security Update Service'\n2. Registry autorun entry\n3. Scheduled task for periodic execution\n4. DLL side-loading via legitimate Windows processes\n\nDETECTION EVASION:\n- Process injection into svchost.exe\n- Anti-VM and sandbox checks\n- Delayed execution (sleep 300 seconds)\n- Domain generation algorithm for backup C2",
+            "clues": ["backdoor-detected", "c2-infrastructure"]
+          }
+        }
+      },
+      "/logs": {
+        "type": "directory",
+        "children": {
+          "network_traffic.pcap.txt": {
+            "type": "file",
+            "content": "NETWORK TRAFFIC ANALYSIS\n=======================\n\nTIME: 2024-12-10 09:15:23 | PROTOCOL: HTTPS | SOURCE: 192.168.10.45 | DESTINATION: 185.159.158.240 | PORT: 8443 | STATUS: ESTABLISHED\nTIME: 2024-12-10 09:16:45 | PROTOCOL: DNS | SOURCE: 192.168.10.45 | DESTINATION: 8.8.8.8 | QUERY: update-server.com | RESPONSE: 185.159.158.240\nTIME: 2024-12-10 09:17:12 | PROTOCOL: HTTPS | SOURCE: 192.168.10.45 | DESTINATION: 185.159.158.240 | PORT: 443 | DATA: [ENCRYPTED_BEACON]\nTIME: 2024-12-10 09:22:33 | PROTOCOL: HTTP | SOURCE: 192.168.10.45 | DESTINATION: 185.159.158.240 | PORT: 80 | DATA: [EXFILTRATION_TRAFFIC]\n\nOUTBOUND CONNECTIONS SUMMARY:\n- 47 connections to 185.159.158.240 (Russian IP range)\n- 23 DNS queries to suspicious domains\n- 156 KB data exfiltrated in encrypted channels\n- Periodic beacons every 300 seconds\n\nSUSPICIOUS DOMAINS CONTACTED:\n- update-server[.]com (185.159.158.240)\n- secure-cdn[.]net (185.159.158.241)\n- microsoft-updates[.]org (suspicious typosquatting)\n- windows-security[.]info (malicious domain)\n\nFIREWALL ALERTS:\n2024-12-10 09:15:23 [ALERT] Outbound connection to known C2 IP: 185.159.158.240\n2024-12-10 09:22:33 [ALERT] Large data transfer detected: 156KB to external IP\n2024-12-10 10:45:12 [ALERT] Suspicious DNS queries for typosquatted domains\n\nGEOLOCATION:\n185.159.158.240 - Moscow, Russia (AS: Autonomous System 12389)\n185.159.158.241 - St. Petersburg, Russia (AS: Autonomous System 12389)",
+            "clues": ["c2-traffic", "data-exfiltration"]
+          }
+        }
+      },
+      "/evidence": {
+        "type": "directory",
+        "children": {
+          "persistence_analysis.txt": {
+            "type": "file",
+            "content": "PERSISTENCE MECHANISM ANALYSIS\n==============================\n\nREGISTRY PERSISTENCE:\nKey: HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\nValue: SecurityUpdate\nData: C:\\Windows\\System32\\wsecupdate.exe /silent\nCreated: 2024-12-10 09:16:22\n\nSCHEDULED TASK PERSISTENCE:\nTask Name: Microsoft\\Windows\\SystemRestore\\SRCheck\nCommand: C:\\Windows\\System32\\wsecupdate.exe\nTrigger: Daily at 3:00 AM + every 4 hours\nUser Context: SYSTEM\nHidden: Yes\n\nSERVICE PERSISTENCE:\nService Name: WSecUpdate\nDisplay Name: Windows Security Update Service\nBinary Path: C:\\Windows\\System32\\wsecupdate.exe -service\nStart Type: Automatic\nDescription: Provides security updates for Windows systems\n\nFILE SYSTEM CHANGES:\n- wsecupdate.exe placed in System32 (masquerading as legitimate)\n- Backup copy in %TEMP%\\Microsoft\\Updates\\wsec.tmp\n- Configuration file: %APPDATA%\\Microsoft\\Security\\config.dat\n\nBOOT PERSISTENCE:\n- Modified bootloader to load malicious driver\n- Driver file: C:\\Windows\\System32\\drivers\\winsec.sys\n- Kernel-level persistence for stealth operation\n\nWMI PERSISTENCE:\n- WMI Event Subscription created\n- Namespace: root\\subscription\n- Filter: SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfRawData_PerfOS_System'\n- Consumer: PowerShell payload execution\n\nEVASION TECHNIQUES:\n✓ Timestomping (file timestamps modified to match system files)\n✓ Process hollowing (injection into legitimate processes)\n✓ Living-off-the-land (abuse of PowerShell, WMI, etc.)\n✓ Certificate spoofing (fake Microsoft signatures)",
+            "clues": ["registry-persistence", "service-persistence", "boot-persistence"]
+          },
+          "threat_attribution.txt": {
+            "type": "file",
+            "content": "THREAT ATTRIBUTION ANALYSIS\n===========================\n\nTHREAT ACTOR: APT28 (Fancy Bear / Pawn Storm)\nCONFIDENCE LEVEL: HIGH (85%)\n\nATTRIBUTION EVIDENCE:\n\n1. INFRASTRUCTURE OVERLAP:\n   - IP 185.159.158.240 previously used in APT28 campaigns\n   - Domain registration patterns match known APT28 infrastructure\n   - Certificate authorities used align with Russian operations\n\n2. MALWARE SIMILARITIES:\n   - Code reuse from X-Agent malware family\n   - Encryption routines identical to previous APT28 samples\n   - Command structure matches Fancy Bear C2 protocols\n\n3. OPERATIONAL PATTERNS:\n   - Spear-phishing targeting matches APT28 victim selection\n   - Timing of attacks aligns with Moscow business hours\n   - Persistence mechanisms consistent with APT28 TTPs\n\n4. GEOPOLITICAL CONTEXT:\n   - Targets align with Russian intelligence interests\n   - Attack timing correlates with diplomatic tensions\n   - Data exfiltration focused on defense and policy documents\n\nKNOWN APT28 ALIASES:\n- Fancy Bear\n- Pawn Storm\n- Sofacy Group\n- STRONTIUM (Microsoft)\n- Sednit\n- Tsar Team\n\nPREVIOUS CAMPAIGNS:\n- DNC Hack (2016)\n- Ukrainian Power Grid (2015)\n- German Bundestag (2015)\n- French TV5Monde (2015)\n- Olympic Destruction (2018)\n\nRECOMMENDATIONS:\n1. Implement APT28-specific IOCs across all networks\n2. Enhanced monitoring for Russian IP ranges\n3. Spear-phishing awareness training for government employees\n4. Deploy advanced EDR solutions with APT28 behavioral signatures\n5. Coordinate with international cybersecurity agencies\n\n--- CASE ASSESSMENT: APT28 ATTRIBUTION CONFIRMED ---",
+            "clues": ["apt28-confirmed", "threat-attribution"]
+          }
+        }
+      }
+    }
+  },
+  "tools": {
+    "available": ["ls", "cat", "cd", "pwd", "grep", "find", "head", "tail", "whoami", "help", "clear"]
+  }
+}

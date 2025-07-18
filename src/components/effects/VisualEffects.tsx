@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface MatrixRainProps {
   intensity?: number;
 }
 
 export function MatrixRain({ intensity = 50 }: MatrixRainProps) {
+  const [mounted, setMounted] = useState(false);
   const [drops, setDrops] = useState<Array<{
     id: number;
     x: number;
@@ -16,6 +17,7 @@ export function MatrixRain({ intensity = 50 }: MatrixRainProps) {
   }>>([]);
 
   useEffect(() => {
+    setMounted(true);
     const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
     const newDrops = Array.from({ length: intensity }, (_, i) => ({
       id: i,
@@ -25,6 +27,8 @@ export function MatrixRain({ intensity = 50 }: MatrixRainProps) {
     }));
     setDrops(newDrops);
   }, [intensity]);
+
+  if (!mounted) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20">
@@ -72,10 +76,10 @@ export function GlitchText({ children, className = '', intensity = 3 }: GlitchTe
     const interval = setInterval(() => {
       setIsGlitching(true);
       setTimeout(() => setIsGlitching(false), 200);
-    }, 3000 + Math.random() * 2000);
+    }, 3000 + Math.random() * 2000 / intensity);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [intensity]);
 
   return (
     <motion.span
@@ -154,13 +158,28 @@ interface ParticleSystemProps {
 }
 
 export function ParticleSystem({ count = 30, color = '#00ff00' }: ParticleSystemProps) {
-  const particles = Array.from({ length: count }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 3 + 1,
-    duration: Math.random() * 10 + 5
-  }));
+  const [mounted, setMounted] = useState(false);
+  const [particles, setParticles] = useState<Array<{
+    id: number;
+    x: number;
+    y: number;
+    size: number;
+    duration: number;
+  }>>([]);
+
+  useEffect(() => {
+    setMounted(true);
+    const newParticles = Array.from({ length: count }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 3 + 1,
+      duration: Math.random() * 10 + 5
+    }));
+    setParticles(newParticles);
+  }, [count]);
+
+  if (!mounted) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none">
@@ -220,6 +239,16 @@ interface CodeRainProps {
 }
 
 export function CodeRain({ lines = ['if (hacker) { investigate(); }', 'const truth = findEvidence();', 'while(mystery) { solve(); }'], speed = 2 }: CodeRainProps) {
+  const [mounted, setMounted] = useState(false);
+  const [positions, setPositions] = useState<number[]>([]);
+
+  useEffect(() => {
+    setMounted(true);
+    setPositions(lines.map(() => Math.random() * 80 + 10));
+  }, [lines]);
+
+  if (!mounted) return null;
+
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-10">
       {lines.map((line, i) => (
@@ -227,12 +256,12 @@ export function CodeRain({ lines = ['if (hacker) { investigate(); }', 'const tru
           key={i}
           className="absolute text-terminal-primary font-mono text-xs whitespace-nowrap"
           style={{ 
-            left: `${Math.random() * 80 + 10}%`,
+            left: `${positions[i] || 50}%`,
             top: `-20px`
           }}
           animate={{ y: '100vh' }}
           transition={{
-            duration: 10 + Math.random() * 5,
+            duration: 10 / speed + Math.random() * 5,
             repeat: Infinity,
             delay: i * 2,
             ease: 'linear'

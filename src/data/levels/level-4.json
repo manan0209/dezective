@@ -1,0 +1,19 @@
+{
+  "id": "level-4",
+  "title": "Cryptocurrency Exchange Hack",
+  "difficulty": "Expert",
+  "category": "Financial Crime",
+  "description": "A major cryptocurrency exchange has been breached. Millions in Bitcoin are missing. Follow the blockchain trail!",
+  "scenario": {
+    "briefing": "CryptoVault Exchange reported a security breach last night. $50 million worth of Bitcoin has been stolen from user wallets. The hackers covered their tracks well, but the blockchain never lies. You need to trace the stolen funds and identify how the hackers gained access.",
+    "objective": "Trace the stolen cryptocurrency and identify the attack vector",
+    "timeLimit": 2400,
+    "maxHints": 6
+  },
+  "scoring": {
+    "maxScore": 2500,
+    "timeBonus": 600,
+    "hintPenalty": 125,
+    "wrongCommandPenalty": 25
+  }
+}

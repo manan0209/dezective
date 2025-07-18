@@ -1,0 +1,19 @@
+{
+  "id": "level-3",
+  "title": "TikTok Manipulation Network",
+  "difficulty": "Advanced",
+  "category": "Social Engineering",
+  "description": "A shadowy network is using fake TikTok accounts to spread misinformation and manipulate trending topics. Uncover their operation!",
+  "scenario": {
+    "briefing": "Intelligence reports suggest a coordinated disinformation campaign on TikTok. Fake accounts are spreading false narratives about climate change, elections, and health information. You need to trace the network, identify the puppet master, and understand their manipulation tactics.",
+    "objective": "Uncover the disinformation network and identify the coordination patterns",
+    "timeLimit": 1800,
+    "maxHints": 5
+  },
+  "scoring": {
+    "maxScore": 2000,
+    "timeBonus": 500,
+    "hintPenalty": 100,
+    "wrongCommandPenalty": 20
+  }
+}

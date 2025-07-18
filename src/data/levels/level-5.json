@@ -1,0 +1,19 @@
+{
+  "id": "level-5",
+  "title": "Nation-State APT Investigation",
+  "difficulty": "Master",
+  "category": "Advanced Persistent Threat",
+  "description": "A sophisticated nation-state actor has infiltrated critical infrastructure. This is your ultimate test as a cyber detective.",
+  "scenario": {
+    "briefing": "CLASSIFIED: A foreign intelligence service has compromised multiple government agencies and private companies. Their advanced persistent threat (APT) has been operating undetected for months. You are the last line of defense. Uncover their command and control infrastructure before they launch their final attack.",
+    "objective": "Identify the APT infrastructure and prevent the final attack",
+    "timeLimit": 3600,
+    "maxHints": 8
+  },
+  "scoring": {
+    "maxScore": 3000,
+    "timeBonus": 800,
+    "hintPenalty": 150,
+    "wrongCommandPenalty": 30
+  }
+}

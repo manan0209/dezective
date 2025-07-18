@@ -1,7 +1,4 @@
-// Core game types for Dezective
-
-export interface GameState {
-  currentLevel: string | null;
+// Core game types for Dezectiveexport interface GameState {currentLevel: string | null;
   score: number;
   startTime: number | null;
   hintsUsed: number;
@@ -11,15 +8,31 @@ export interface GameState {
 }
 
 export interface User {
-  id: string;
-  username: string;
-  totalScore: number;
+  id: string;  username: string;  totalScore: number;
   levelsCompleted: number;
+  completedLevels?: string[];
   createdAt: string;
   rank?: number;
 }
-
-export interface Score {
+export interface UserProgress {
+  completedLevels: string[];
+  totalScore: number;
+  achievements: string[];
+  lastLogin: string;
+  level: number;
+  xp: number;
+  xpToNext: number;  activeTitle: string;
+  investigationsCompleted: number;
+  streak: number;
+  fastestTime: number;
+  perfectRuns: number;  favoriteCategory: string;
+}export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+}export interface Score {
   id: string;
   userId: string;
   levelId: string;
@@ -33,41 +46,35 @@ export interface Score {
 export interface LeaderboardEntry {
   username: string;
   totalScore: number;
-  levelsCompleted: number;
-  rank: number;
+  levelsCompleted: number;  rank: number;
 }
 
 // Terminal types
 export interface TerminalLine {
   id: string;
-  type: 'input' | 'output' | 'error' | 'warning' | 'info';
-  content: string;
-  timestamp: number;
-}
+  type: 'input' | 'output' | 'error' | 'warning' | 'info';  content: string;
+  timestamp: number;}
 
 export interface Command {
   name: string;
-  description: string;
-  usage: string;
+  description: string;  usage: string;
   aliases?: string[];
-  handler: (args: string[]) => Promise<CommandResult>;
-}
-
+  handler: (args: string[]) => Promise<CommandResult>;}
 export interface CommandResult {
   success: boolean;
   output: string;
   type: 'output' | 'error' | 'warning' | 'info';
   triggersProgress?: boolean;
   unlockClues?: string[];
-  unlockTools?: string[];
-}
+  unlockTools?: string[];}
 
 // Level system types
 export interface Level {
   id: string;
-  title: string;
-  difficulty: string;
-  description: string;
+  title: string;  difficulty: string;
+  category: string;  description: string;
+  estimatedTime?: string;
+  trendingScore?: number;
   scenario: {
     briefing: string;
     objective: string;
@@ -75,25 +82,25 @@ export interface Level {
     maxHints: number;
   };
   environment: {
-    serverName: string;
-    osType: string;
+    serverName: string;    osType: string;
     availableCommands: string[];
     fileSystem: Record<string, unknown>;
     specialCommands?: Record<string, {
       output: string | string[];
       action?: string;
-    }>;
-  };
+    }>;  };
   solution: {
     steps: string[];
-    finalAnswer: string;
-    explanation: string;
+    finalAnswer: string;    explanation: string;
   };
   scoring: {
     maxScore: number;
-    timeBonus: number;
-    hintPenalty: number;
+    timeBonus: number;hintPenalty: number;
     wrongCommandPenalty: number;
+  };
+  rewards?: {
+    xp: number;
+    badges: string[];
   };
 }
 
@@ -102,19 +109,15 @@ export interface Clue {
   title: string;
   description: string;
   hint: string;
-  triggerCommands: string[];
-  revealed: boolean;
-}
+  triggerCommands: string[];revealed: boolean;}
 
 export interface Tool {
   id: string;
   name: string;
   description: string;
   type: 'decoder' | 'hash' | 'metadata' | 'analyzer';
-  unlocked: boolean;
-  unlockCondition?: string;
+  unlocked: boolean;  unlockCondition?: string;
 }
-
 export interface LevelState {
   unlockedClues: string[];
   unlockedTools: string[];
@@ -139,11 +142,7 @@ export interface TerminalProps {
 export interface ClueViewerProps {
   clue: Clue;
   onClose: () => void;
-}
-
-export interface ToolProps {
-  tool: Tool;
-  onUse: (input: string) => string;
+}export interface ToolProps {  tool: Tool;  onUse: (input: string) => string;
 }
 
 // Game engine types
@@ -164,10 +163,7 @@ export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
   message?: string;
-}
-
-export interface ScoreSubmission {
-  levelId: string;
+}export interface ScoreSubmission {  levelId: string;
   score: number;
   completionTime: number;
   hintsUsed: number;
@@ -178,31 +174,22 @@ export interface ScoreSubmission {
 export interface FileSystemNode {
   name: string;
   type: 'file' | 'directory';
-  content?: string;
-  children?: FileSystemNode[];
-  metadata?: {
-    size: number;
-    modified: string;
-    permissions: string;
-    hidden?: boolean;
+  content?: string;  children?: FileSystemNode[];
+  metadata?: {    size: number;    modified: string;
+    permissions: string;hidden?: boolean;
   };
 }
 
 export interface FileSystem {
   root: FileSystemNode;
   currentPath: string[];
-  listDirectory: (path?: string[]) => FileSystemNode[];
-  readFile: (path: string[]) => string | null;
-  fileExists: (path: string[]) => boolean;
-  navigate: (path: string) => boolean;
-}
+  listDirectory: (path?: string[]) => FileSystemNode[];  readFile: (path: string[]) => string | null;
+  fileExists: (path: string[]) => boolean;  navigate: (path: string) => boolean;}
 
 // Network simulation types (for advanced levels)
-export interface NetworkPacket {
-  id: string;
+export interface NetworkPacket {id: string;
   source: string;
-  destination: string;
-  protocol: string;
+  destination: string;  protocol: string;
   data: string;
   timestamp: number;
 }
