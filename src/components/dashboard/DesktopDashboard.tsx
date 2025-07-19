@@ -1,12 +1,15 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useGameStore } from '@/lib/game-store';
 import { levelManager } from '@/lib/level-manager';
 import { SupabaseAPI } from '@/lib/api';
 import { SoundManager } from '@/lib/sound-manager';
-import { UserProgress, Achievement, LeaderboardEntry } from '@/types';
+import { UserProgress, Achievement, LeaderboardEntry, User } from '@/types';
+import { Database } from '@/lib/supabase';
+
+type DbScore = Database['public']['Tables']['scores']['Row'];
 
 // Mock achievements data
 const ACHIEVEMENTS: Achievement[] = [
@@ -26,63 +29,13 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
   
   // Real data state
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
-  const [userScores, setUserScores] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [userStats, setUserStats] = useState<any>(null);
+  const [userStats, setUserStats] = useState<UserProgress | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const soundManager = SoundManager.getInstance();
 
-  // Update time every second for that authentic feel
-  useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(interval);  }, []);
-
-  // Enable/disable sounds
-  useEffect(() => {
-    soundManager.setEnabled(soundEnabled);
-  }, [soundEnabled]);
-  useEffect(() => {
-    if (user?.id) {
-      loadUserData();
-    }
-  }, [user?.id]);
-
-  const loadUserData = async () => {
-    if (!user?.id) return;
-    
-    setIsLoading(true);
-    try {
-      // Fetch user scores and leaderboard data in parallel
-      const [scores, leaderboardRaw] = await Promise.all([
-        SupabaseAPI.getUserScores(user.id),
-        SupabaseAPI.getGlobalLeaderboard(20)
-      ]);
-      
-      setUserScores(scores);
-      
-      // Map leaderboard data to match our interface
-      const leaderboard: LeaderboardEntry[] = leaderboardRaw.map(entry => ({
-        username: entry.username,
-        totalScore: entry.total_score,
-        levelsCompleted: entry.levels_completed,
-        rank: entry.rank      }));
-      
-      setLeaderboardData(leaderboard);
-      
-      // Calculate user stats from scores
-      const stats = calculateUserStats(scores, user);
-      setUserStats(stats);
-      
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const calculateUserStats = (scores: any[], user: any) => {
+  const calculateUserStats = useCallback((scores: DbScore[], user: User) => {
     const completedLevels = scores.map(s => s.level_id);
-    const totalTime = scores.reduce((sum, s) => sum + s.completion_time, 0);
     const fastestTime = scores.length > 0 ? Math.min(...scores.map(s => s.completion_time)) : 0;
     const perfectRuns = scores.filter(s => s.hints_used === 0 && s.wrong_commands === 0).length;
     
@@ -100,12 +53,13 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
       activeTitle: getTitleFromScore(user.totalScore || 0),
       investigationsCompleted: scores.length,
       streak,
-      fastestTime,      perfectRuns,
+      fastestTime,
+      perfectRuns,
       favoriteCategory: 'Digital Forensics', // Could be calculated from level types
     };
-  };
+  }, []);
 
-  const calculateStreak = (scores: any[]) => {
+  const calculateStreak = (scores: DbScore[]) => {
     // Simplified streak calculation - count unique days with completions
     const uniqueDays = new Set(
       scores.map(s => new Date(s.completed_at).toDateString())
@@ -121,7 +75,8 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
     return 'Rookie Agent';
   };
 
-  const calculateAchievements = (stats: any) => {    const achievements = [];
+  const calculateAchievements = (stats: UserProgress) => {
+    const achievements = [];
     
     if (stats.investigationsCompleted > 0) {
       achievements.push({ 
@@ -137,7 +92,8 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
       achievements.push({ 
         id: 'speed-demon', 
         title: 'Speed Demon', 
-        description: 'Complete a level in under 5 minutes',         icon: '⚡', 
+        description: 'Complete a level in under 5 minutes', 
+        icon: '⚡', 
         unlocked: true 
       });
     }
@@ -162,7 +118,8 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
       });
     }
     
-    if (stats.investigationsCompleted >= 5) {      achievements.push({ 
+    if (stats.investigationsCompleted >= 5) {
+      achievements.push({ 
         id: 'master-detective', 
         title: 'Master Detective', 
         description: 'Complete 5 levels', 
@@ -173,6 +130,54 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
 
     return achievements;
   };
+
+  const loadUserData = useCallback(async () => {
+    if (!user?.id) return;
+    
+    setIsLoading(true);
+    try {
+      // Fetch user scores and leaderboard data in parallel
+      const [scores, leaderboardRaw] = await Promise.all([
+        SupabaseAPI.getUserScores(user.id),
+        SupabaseAPI.getGlobalLeaderboard(20)
+      ]);
+      
+      // Map leaderboard data to match our interface
+      const leaderboard: LeaderboardEntry[] = leaderboardRaw.map(entry => ({
+        username: entry.username,
+        totalScore: entry.total_score,
+        levelsCompleted: entry.levels_completed,
+        rank: entry.rank
+      }));
+      
+      setLeaderboardData(leaderboard);
+      
+      // Calculate user stats from scores
+      const stats = calculateUserStats(scores, user);
+      setUserStats(stats);
+      
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, calculateUserStats]);
+
+  // Update time every second for that authentic feel
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(interval);  }, []);
+
+  // Enable/disable sounds
+  useEffect(() => {
+    soundManager.setEnabled(soundEnabled);
+  }, [soundEnabled, soundManager]);
+  
+  useEffect(() => {
+    if (user?.id) {
+      loadUserData();
+    }
+  }, [user?.id, loadUserData]);
 
   const refreshData = () => {
     if (user?.id) {
@@ -327,8 +332,9 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
                 </div>
                 
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="text-center p-2 bg-gray-800/50 rounded">                    <div className="text-terminal-primary font-bold">{userProgress.investigationsCompleted}</div>
-// HACK: Quick solution
+                  <div className="text-center p-2 bg-gray-800/50 rounded">
+                    <div className="text-terminal-primary font-bold">{userProgress.investigationsCompleted}</div>
+                    {/* HACK: Quick solution */}
                     <div className="text-gray-400">Cases</div>
                   </div>
                   <div className="text-center p-2 bg-gray-800/50 rounded">
@@ -342,7 +348,6 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
             {/* Navigation Menu */}
             <div className="bg-black/60 border border-terminal-primary/50 rounded-lg backdrop-blur-sm">
               {[
-// eslint-disable-next-line
                 { id: 'missions', label: 'Active Missions', icon: 'MISSION' },
                 { id: 'profile', label: 'Agent Profile', icon: 'PROFILE' },
                 { id: 'leaderboard', label: 'Global Ranks', icon: 'RANK' },
@@ -753,7 +758,7 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
             </div>
 
             {/* Quick Stats */}
-// DEBUG: Remove before production
+            {/* DEBUG: Remove before production */}
             <div className="bg-black/60 border border-terminal-primary/50 rounded-lg p-4 backdrop-blur-sm">
               <h3 className="text-terminal-primary font-bold mb-3 font-mono">QUICK STATS</h3>
               <div className="space-y-3 text-sm">
@@ -772,7 +777,6 @@ export function DesktopDashboard({ onStartInvestigation }: DesktopDashboardProps
 
             {/* Recent Achievements */}
             <div className="bg-black/60 border border-yellow-500/50 rounded-lg p-4 backdrop-blur-sm">
-// @ts-ignore - temporary fix
               <h3 className="text-yellow-500 font-bold mb-3 font-mono">RECENT ACHIEVEMENTS</h3>
               <div className="space-y-2">
                 {userProgress.achievements.slice(0, 3).map((achievementId) => {

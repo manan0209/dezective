@@ -9,7 +9,8 @@ import { subscribeWithSelector } from 'zustand/middleware';interface GameStore e
   terminalLines: TerminalLine[];
   isConnected: boolean;
   
-  // ActionssetUser: (user: User | null) => void;
+  // Actions
+  setUser: (user: User | null) => void;
   createUser: (username: string) => Promise<boolean>;
   loginUser: (username: string) => Promise<boolean>;
   startLevel: (level: Level) => void;
@@ -76,7 +77,7 @@ export const useGameStore = create<GameStore>()(
       isConnected: false,
 
       // Actions
-      setUser: (user) => {
+      setUser: (user: User | null) => {
         set({ user });
         if (user) {
           saveToLocalStorage('dezective_user', user);

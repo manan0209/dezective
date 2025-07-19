@@ -102,7 +102,7 @@ class LevelManager {
       case 'whoami':
         return this.currentUsername;
       case 'netstat':
-        return this.handleNetstat(args);
+        return this.handleNetstat();
       case 'iptables':
         return this.handleIptables(args);
       case 'clear':
@@ -160,7 +160,7 @@ class LevelManager {
     return '';
   }
 
-  private handleNetstat(_args: string[]): string {
+  private handleNetstat(): string {
     return `Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State      
 tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     

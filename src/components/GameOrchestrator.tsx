@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { EpicLandingPage } from '@/components/landing/EpicLandingPage';
 import { DesktopDashboard } from '@/components/dashboard/DesktopDashboard';
 import { EnhancedTerminal } from '@/components/terminal/EnhancedTerminal';
-import { AuthPanel } from '@/components/auth/AuthPanel';
+import { AuthPanel } from '@/components/game/AuthPanel';
 import { MatrixRain, ParticleSystem } from '@/components/effects/VisualEffects';
 import { SoundEffects, useSounds } from '@/lib/sound-manager';
 import { useGameStore, useTerminalLines, useUser } from '@/lib/game-store';
@@ -69,8 +69,8 @@ export function GameOrchestrator({ className }: GameOrchestratorProps) {
   const handleStartMission = (missionId: string) => {
     sounds.playHackSound();
     
-    // Load the specific level
-    if (levelManager.loadLevel(missionId)) {
+    // Initialize the level (simplified for single-level system)
+    if (levelManager.initializeLevel()) {
       setCurrentMission(missionId);
       setGameState('terminal');
       
@@ -191,16 +191,7 @@ export function GameOrchestrator({ className }: GameOrchestratorProps) {
           }, 500);
         }
 
-        // Show investigation progress hints
-        const progress = levelManager.getInvestigationProgress();
-        if (progress.nextHint && Math.random() < 0.3) { // 30% chance to show hint
-          setTimeout(() => {
-            addTerminalLine({
-              type: 'info',
-              content: `💡 HINT: ${progress.nextHint}`
-            });
-          }, 1000);
-        }
+        // Note: Investigation progress hints feature temporarily disabled
 
       }
     } catch (error) {

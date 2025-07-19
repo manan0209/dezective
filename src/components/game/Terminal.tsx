@@ -4,12 +4,19 @@ import { cn } from '@/lib/utils';
 import { TerminalLine } from '@/types';
 import React, { useEffect, useRef, useState } from 'react';
 
+// Type for level manager - define the interface we need
+interface LevelManagerType {
+  getAvailableCommands(): string[];
+  getCurrentWorkingDirectory(): string;
+  getAvailableFiles(directory: string): string[];
+}
+
 interface TerminalProps {
   lines: TerminalLine[];
   onCommand: (command: string) => void;
   isLoading?: boolean;
   className?: string;
-  levelManager?: unknown; // Generic type for level manager
+  levelManager?: LevelManagerType | null; // Properly typed level manager
 }
 
 export function Terminal({ lines, onCommand, isLoading = false, className, levelManager }: TerminalProps) {

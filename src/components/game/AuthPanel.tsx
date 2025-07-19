@@ -3,7 +3,12 @@
 import { useGameStore } from '@/lib/game-store';
 import { useState } from 'react';
 
-export function AuthPanel() {
+interface AuthPanelProps {
+  onClose?: () => void;
+  onSuccess?: () => void;
+}
+
+export function AuthPanel({ onClose, onSuccess }: AuthPanelProps) {
   const { user, createUser, loginUser } = useGameStore();
   const [username, setUsername] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
@@ -21,6 +26,8 @@ export function AuthPanel() {
       } else {
         await loginUser(username.trim());
       }
+      // Call onSuccess callback if auth was successful
+      onSuccess?.();
     } finally {
       setIsLoading(false);
       setUsername('');
@@ -30,9 +37,20 @@ export function AuthPanel() {
   if (user) {
     return (
       <div className="bg-terminal-panel border border-terminal-border rounded-lg p-4">
-        <h3 className="text-lg font-bold text-terminal-primary mb-3 font-mono">
-          Agent Status
-        </h3>
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-lg font-bold text-terminal-primary font-mono">
+            Agent Status
+          </h3>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="text-terminal-secondary hover:text-terminal-primary transition-colors"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          )}
+        </div>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-terminal-secondary">Agent:</span>
